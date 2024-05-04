@@ -33,41 +33,46 @@ model Log {
 }
 
 model User {
-  id               String            @id @unique @default(uuid())
-  name             String
-  lastname         String
-  secondLastname   String?
-  email            String            @unique
-  password         String
-  dateAdmission    DateTime?
-  phone            String?
-  profilePicture   String?
-  loginOption      String
-  firebaseToken    String?
+  id                 String           @id @unique @default(uuid())
+  name               String
+  lastname           String
+  secondLastname     String?
+  email              String           @unique
+  password           String
+  dateAdmission      DateTime?
+  phone              String?
+  profilePicture     String?
+  loginOption        String
+  firebaseToken      String?
   // * Relations
-  position         Position?
-  herarchy         Hierarchy?
-  validationForm   ValidationForm?
-  headquarter      Headquarter?
-  statusValidation StatusValidation?
-  membershipType   Membership?
+  position           Position         @relation(fields: [positionId], references: [id])
+  positionId         String           @unique
+  herarchy           Hierarchy        @relation(fields: [hierarchyId], references: [id])
+  hierarchyId        String           @unique
+  userValidationForm ValidationForm   @relation(fields: [validationFormId], references: [id])
+  validationFormId   String           @unique
+  headquarter        Headquarter      @relation(fields: [headquaerterId], references: [id])
+  headquaerterId     String           @unique
+  statusValidation   StatusValidation @relation(fields: [statusValidationId], references: [id])
+  statusValidationId String           @unique
+  membership         Membership       @relation(fields: [membershipId], references: [id])
+  membershipId       String           @unique
   // * End Relations
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 
   @@map("users")
 }
 
 model Position {
-  id           String   @id @unique @default(uuid())
-  name         String
-  description  String
+  id          String   @id @unique @default(uuid())
+  name        String
+  description String
   // * Relations
-  userPosition User     @relation(fields: [positionId], references: [id])
-  positionId   String   @unique
+  position    User?
   // * End Relations
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("positions")
 }
@@ -76,8 +81,7 @@ model Hierarchy {
   id           String   @id @unique @default(uuid())
   name         String
   // * Relations
-  userHerarchy User     @relation(fields: [hierarchyId], references: [id])
-  hierarchyId  String   @unique
+  userHerarchy User?
   // * End Relations
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -86,43 +90,40 @@ model Hierarchy {
 }
 
 model ValidationForm {
-  id                 String      @id @unique @default(uuid())
+  id                 String     @id @unique @default(uuid())
   name               String
   // * Relations
-  userValidationForm User        @relation(fields: [validationFormId], references: [id])
-  validationFormId   String      @unique
-  profiles           Profile[]
-  Photograph         Photograph?
+  userValidationForm User?
+  profiles           Profile    @relation(fields: [profileId], references: [id])
+  profileId          String
+  photograph         Photograph @relation(fields: [photographId], references: [id])
+  photographId       String     @unique
   // * End Relations
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
   @@map("validationForms")
 }
 
 model Profile {
-  id               String         @id @unique @default(uuid())
-  profileUrl       String
+  id             String           @id @unique @default(uuid())
+  profileUrl     String
   // * Relations
-  validationForm   ValidationForm @relation(fields: [validationFormId], references: [id])
-  validationFormId String
+  ValidationForm ValidationForm[]
   // * End Relations
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@map("profiles")
 }
 
 model Photograph {
-  id               String         @id @unique @default(uuid())
-  photographUrl    String
-  type             String
-  // * Relations
-  validationForm   ValidationForm @relation(fields: [validationFormId], references: [id])
-  validationFormId String         @unique
-  // * End Relations
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  id             String          @id @unique @default(uuid())
+  photographUrl  String
+  type           String
+  validationForm ValidationForm?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@map("photographs")
 }
@@ -132,8 +133,7 @@ model Headquarter {
   name            String
   location        String
   // * Relations
-  userHeadQuarter User     @relation(fields: [headquaerterId], references: [id])
-  headquaerterId  String   @unique
+  userHeadQuarter User?
   // * End Relations
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -146,43 +146,41 @@ model StatusValidation {
   status               String
   reason               String
   // * Relations
-  userStatusValidation User     @relation(fields: [statusValidationId], references: [id])
-  statusValidationId   String   @unique
+  userStatusValidation User?
   // * End Relations
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
-  @@map("validations")
+  @@map("statusvalidations")
 }
 
 model Membership {
-  id               String            @id @unique @default(uuid())
-  name             String
-  cost             Decimal
+  id                 String          @id @unique @default(uuid())
+  name               String
+  cost               Decimal
   // * Relations
-  userMembership   User              @relation(fields: [userMembershipId], references: [id])
-  userMembershipId String            @unique
-  membershipOffers MembershipOffer[]
+  membershipOffers   MembershipOffer @relation(fields: [membershipOffersId], references: [id])
+  membershipOffersId String
+  userMembership     User?
   // * End Relations
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
 
   @@map("memberships")
 }
 
 model MembershipOffer {
-  id             String     @id @unique @default(uuid())
+  id             String       @id @unique @default(uuid())
   name           String
   percetageOffer Decimal
   duration       String?
   dateStart      DateTime?
   dateEnd        DateTime?
   // * Relations
-  memberships    Membership @relation(fields: [membershipsId], references: [id])
-  membershipsId  String
+  memberships    Membership[]
   // * End Relations
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@map("membershipOffers")
 }
