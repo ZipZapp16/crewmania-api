@@ -13,19 +13,176 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id Int @id @default(autoincrement())
-  nombre String
-  apellidoMaterno String
-  apellidoPaterno String
-  fechaDeIngreso DateTime
-  email String
-  password String
-  puesto String
-  jerarquia String
-  baseDeOperaciones String
-  fotoPerfil String?
-  fotoConUniforme String?
-  fotoValidacion String?
-  cuentaVerificada Boolean
+model Version {
+  id          String   @id @unique @default(uuid())
+  number      Decimal
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("versions")
+}
+
+model Log {
+  id          String   @id @unique @default(uuid())
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("logs")
+}
+
+model User {
+  id               String            @id @unique @default(uuid())
+  name             String
+  lastname         String
+  secondLastname   String?
+  email            String            @unique
+  password         String
+  dateAdmission    DateTime?
+  phone            String?
+  profilePicture   String?
+  loginOption      String
+  firebaseToken    String?
+  // * Relations
+  position         Position?
+  herarchy         Hierarchy?
+  validationForm   ValidationForm?
+  headquarter      Headquarter?
+  statusValidation StatusValidation?
+  membershipType   Membership?
+  // * End Relations
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@map("users")
+}
+
+model Position {
+  id           String   @id @unique @default(uuid())
+  name         String
+  description  String
+  // * Relations
+  userPosition User     @relation(fields: [positionId], references: [id])
+  positionId   String   @unique
+  // * End Relations
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("positions")
+}
+
+model Hierarchy {
+  id           String   @id @unique @default(uuid())
+  name         String
+  // * Relations
+  userHerarchy User     @relation(fields: [hierarchyId], references: [id])
+  hierarchyId  String   @unique
+  // * End Relations
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("hierarchys")
+}
+
+model ValidationForm {
+  id                 String      @id @unique @default(uuid())
+  name               String
+  // * Relations
+  userValidationForm User        @relation(fields: [validationFormId], references: [id])
+  validationFormId   String      @unique
+  profiles           Profile[]
+  Photograph         Photograph?
+  // * End Relations
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@map("validationForms")
+}
+
+model Profile {
+  id               String         @id @unique @default(uuid())
+  profileUrl       String
+  // * Relations
+  validationForm   ValidationForm @relation(fields: [validationFormId], references: [id])
+  validationFormId String
+  // * End Relations
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@map("profiles")
+}
+
+model Photograph {
+  id               String         @id @unique @default(uuid())
+  photographUrl    String
+  type             String
+  // * Relations
+  validationForm   ValidationForm @relation(fields: [validationFormId], references: [id])
+  validationFormId String         @unique
+  // * End Relations
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@map("photographs")
+}
+
+model Headquarter {
+  id              String   @id @unique @default(uuid())
+  name            String
+  location        String
+  // * Relations
+  userHeadQuarter User     @relation(fields: [headquaerterId], references: [id])
+  headquaerterId  String   @unique
+  // * End Relations
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("headquarters")
+}
+
+model StatusValidation {
+  id                   String   @id @unique @default(uuid())
+  status               String
+  reason               String
+  // * Relations
+  userStatusValidation User     @relation(fields: [statusValidationId], references: [id])
+  statusValidationId   String   @unique
+  // * End Relations
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("validations")
+}
+
+model Membership {
+  id               String            @id @unique @default(uuid())
+  name             String
+  cost             Decimal
+  // * Relations
+  userMembership   User              @relation(fields: [userMembershipId], references: [id])
+  userMembershipId String            @unique
+  membershipOffers MembershipOffer[]
+  // * End Relations
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@map("memberships")
+}
+
+model MembershipOffer {
+  id             String     @id @unique @default(uuid())
+  name           String
+  percetageOffer Decimal
+  duration       String?
+  dateStart      DateTime?
+  dateEnd        DateTime?
+  // * Relations
+  memberships    Membership @relation(fields: [membershipsId], references: [id])
+  membershipsId  String
+  // * End Relations
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@map("membershipOffers")
 }
