@@ -7,7 +7,7 @@ import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger
 @ApiUnauthorizedResponse({
     description: "Unauthorized Bearer Auth"
 })
-@Controller('api/v1/users')
+@Controller('users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
