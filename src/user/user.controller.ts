@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
@@ -17,12 +17,12 @@ export class UserController {
     }
 
     @Get('user/:id')
-    getUser(@Param('id') id: number) {
-        return this.userService.getUser(Number(id));
+    getUser(@Param('id', ParseUUIDPipe) id: string) {
+        return this.userService.getUser(id);
     }
 
     @Delete('user/:id')
-    deleteUser(@Param('id') id: number) {
-        return this.userService.deleteUser(Number(id));
+    deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+        return this.userService.deleteUser(id);
     }
 }

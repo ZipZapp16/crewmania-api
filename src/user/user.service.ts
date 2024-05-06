@@ -8,18 +8,18 @@ export class UserService {
         private prismaService: PrismaService
     ) { }
 
-    async deleteUser(id: number) {
-        const isExistUser = await this.prismaService.usuario.findUnique({
+    async deleteUser(id: string) {
+        const isExistUser = await this.prismaService.user.findUnique({
             where: {
                 id
             }
         });
 
         if (!isExistUser) {
-            throw new NotFoundException('NO existe un usuario con registrado con ese correo.');
+            throw new NotFoundException('NO existe un user con registrado con ese correo.');
         }
 
-        const user = await this.prismaService.usuario.delete({
+        const user = await this.prismaService.user.delete({
             where: {
                 id: id,
             },
@@ -35,10 +35,10 @@ export class UserService {
     }
 
     async getAllUsers(): Promise<Users[]> {
-        const users = await this.prismaService.usuario.findMany();
+        const users = await this.prismaService.user.findMany();
 
         if(!users) {
-            throw new NotFoundException('NO existen usuarios registrados.');
+            throw new NotFoundException('NO existen users registrados.');
         }
 
         return [
@@ -50,8 +50,8 @@ export class UserService {
         ];
     }
 
-    async getUser(id: number): Promise<User[]> {
-        const user = await this.prismaService.usuario.findUnique({
+    async getUser(id: string): Promise<User[]> {
+        const user = await this.prismaService.user.findUnique({
             where: {
                 id
             }
@@ -59,7 +59,7 @@ export class UserService {
 
 
         if(!user) {
-            throw new NotFoundException('NO existe el usuario solicitado.');
+            throw new NotFoundException('NO existe el user solicitado.');
         }
 
         return [
