@@ -9,12 +9,12 @@ import { ValidationFormModule } from './validation-form/validation-form.module';
 import { ProfileModule } from './profile/profile.module';
 import { PhotographModule } from './photograph/photograph.module';
 import { HeadquarterModule } from './headquarter/headquarter.module';
-import { ValidationModule } from './validation/validation.module';
 import { MembershipModule } from './membership/membership.module';
 import { MembershipOfferModule } from './membership-offer/membership-offer.module';
+import { StatusValidationModule } from './status-validation/status-validation.module';
 
 @Module({
-  imports: [AuthModule, DefaultModule, UserModule, SeedModule, PositionModule, HierarchyModule, ValidationFormModule, ProfileModule, PhotographModule, HeadquarterModule, ValidationModule, MembershipModule, MembershipOfferModule],
+  imports: [AuthModule, DefaultModule, UserModule, SeedModule, PositionModule, HierarchyModule, ValidationFormModule, ProfileModule, PhotographModule, HeadquarterModule, MembershipModule, MembershipOfferModule, StatusValidationModule],
   controllers: [],
   providers: [],
 })
