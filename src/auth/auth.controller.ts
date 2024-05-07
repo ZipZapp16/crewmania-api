@@ -23,7 +23,7 @@ export class AuthController {
     description: 'The record has been successfully created.',
   })
   @Post('signup')
-  createUser(@Body() createUserDto: CreateUserDto) {
-      return this.authService.authCreateUser(createUserDto);
+  registerUser(@Body() createUserDto: CreateUserDto) {
+      return this.authService.registerUser(createUserDto);
   }
 }
