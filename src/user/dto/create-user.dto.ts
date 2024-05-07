@@ -1,43 +1,70 @@
-import { IsBoolean, IsDate, IsEmail, IsString, MinLength } from "class-validator";
+import { Prisma } from "@prisma/client";
+import { IsDate, IsEmail, IsOptional, IsString, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
 
 
 export class CreateUserDto {
+    @MinLength(1)
     @IsString()
-    nombre: string;
+    name: string;
+
+    @MinLength(1)
+    @IsString()
+    lastname: string;
 
     @IsString()
-    apellidoPaterno: string;
-
-    @IsString()
-    apellidoMaterno: string;
-
-    @IsString()
-    fechaDeIngreso: string;
+    @IsOptional()
+    secondLastname?: string;
 
     @IsEmail()
     email: string;
 
-    @MinLength(8)
+    @IsString()
+    @MinLength(6)
+    @MaxLength(50)
+    @Matches(
+        /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+        message: 'The password must have a Uppercase, lowercase letter and a number'
+    })
     password: string;
 
-    @IsString()
-    puesto: string;
+    @IsDate()
+    dateAdmission: Date; 
 
     @IsString()
-    jerarquia: string;
+    @MinLength(10)
+    phone: string;
 
     @IsString()
-    baseDeOperaciones: string;
+    @IsOptional()
+    profilePicture?: string;
 
     @IsString()
-    fotoPerfil: string;
+    loginOption: string;
 
     @IsString()
-    fotoConUniforme: string;
+    @IsOptional()
+    firebaseToken?: string;
 
     @IsString()
-    fotoValidacion: string;
+    position: Prisma.PositionCreateNestedOneWithoutPositionInput;
 
-    @IsBoolean()
-    cuentaVerificada: boolean;
+    @IsString()
+    @IsUUID()
+    herarchy: Prisma.HierarchyUpsertWithoutUserHerarchyInput;
+
+    @IsString()
+    @IsUUID()
+    userValidationForm: Prisma.ValidationFormCreateNestedOneWithoutUserValidationFormInput;
+
+    @IsString()
+    @IsUUID()
+    headquarter: Prisma.HeadquarterCreateNestedOneWithoutUserHeadQuarterInput;
+
+    @IsString()
+    @IsUUID()
+    statusValidation: Prisma.StatusValidationCreateNestedOneWithoutUserStatusValidationInput;
+
+    @IsString()
+    @IsUUID()
+    membership: Prisma.MembershipCreateNestedOneWithoutUserMembershipInput;
 }
