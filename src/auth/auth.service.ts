@@ -4,36 +4,39 @@ import { AuthUserDto } from './dto/auth-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtPayload } from './interfaces/jwt-payload';
 import * as bcryptjs from 'bcryptjs';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { Prisma } from '@prisma/client';
+import { UserResponse } from 'src/user/interfaces/user.interface';
 
 @Injectable()
 export class AuthService {
+
   constructor(
     private jwtService: JwtService,
     private prismaService: PrismaService
   ) { }
 
+  // * Funcion que inicia sesion
   async authUser(authUserDto: AuthUserDto) {
     try {
       const { email, password } = authUserDto;
 
-      const isUserExist = await this.prismaService.usuario.findFirst({
+      const isUserExist = await this.prismaService.user.findFirst({
         where: {
           email
         }
       });
 
-      if(!isUserExist) {
+      if (!isUserExist) {
         throw new UnauthorizedException('Usuario no existe');
       }
 
-      if ( !bcryptjs.compareSync( password, isUserExist.password ) ) {
+      if (!bcryptjs.compareSync(password, isUserExist.password)) {
         throw new UnauthorizedException('Not valid credentials - password');
       }
 
       const { password: _, ...restOfData } = isUserExist;
 
-      const fullname = `${restOfData.nombre} ${restOfData.apellidoPaterno} ${restOfData.apellidoMaterno}`;
+      const fullname = `${restOfData.name} ${restOfData.lastname} ${restOfData.secondLastname}`;
 
       return [
         {
@@ -47,39 +50,46 @@ export class AuthService {
     }
   }
 
-  async authCreateUser(createUserDto: CreateUserDto) {
+  // * Funcion que registra un nuevo usuario
+  async registerUser(createUserDto: Prisma.UserCreateInput): Promise<UserResponse[]> {
 
-    const { email, password, fechaDeIngreso, ...restOfData } = createUserDto;
+    try {
+      const { email, password, dateAdmission, ...restOfData } = createUserDto;
 
-    const isExistUser = await this.prismaService.usuario.findFirst({
+      await this.prismaService.user.findFirst({
         where: {
-            email
+          email
         }
-    });
+      });
 
-    if (isExistUser) {
-        throw new BadRequestException('Ya existe un usuario registrado con ese correo.');
-    }
-
-    const newData = {
+      const newData = {
         email,
         password: bcryptjs.hashSync(password, 10),
-        fechaDeIngreso: new Date(fechaDeIngreso),
+        dateAdmission: new Date(dateAdmission),
         ...restOfData
-    }
+      }
 
-    const user = await this.prismaService.usuario.create({
+      const user = await this.prismaService.user.create({
         data: newData
-    });
+      });
 
-    return [
+
+      return [
         {
-            status: "ok",
-            message: "success",
-            data: user
+          status: "ok",
+          message: "success",
+          data: user
         }
-    ];
-}
+      ];
+
+    } catch (error) {
+      console.log(error)
+
+      // if (isExistUser) {
+      //   throw new BadRequestException('Ya existe un usuario registrado con ese correo.');
+      // }
+    }
+  }
 
   getJWT(payload: JwtPayload) {
     return this.jwtService.sign(payload);
