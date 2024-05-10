@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtPayload } from './interfaces/jwt-payload';
 import * as bcryptjs from 'bcryptjs';
 import { Prisma } from '@prisma/client';
-import { UserResponse } from 'src/user/interfaces/user.interface';
+import { UserResponse } from 'src/user/interfaces/userResponse.interface';
 
 @Injectable()
 export class AuthService {

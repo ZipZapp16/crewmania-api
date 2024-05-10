@@ -1,6 +1,19 @@
-import { User } from "@prisma/client";
-import { DataResponse } from "src/interfaces/data-response.interface";
-
-export interface UserResponse extends DataResponse {
-    data: User | User[];
+export interface User {
+        id: string;
+        name: string;
+        lastname: string;
+        secondLastname: string;
+        email: string;
+        password: string;
+        dateAdmission: Date;
+        phone?: string;
+        profilePicture: string;
+        loginOption: string;
+        firebaseToken: string;
+        headquarterId: string;
+        hierarchyId: string;
+        membershipId: string;
+        positionId: string;
+        statusVerificationId: string;
+        validationFormId: string;
 }
