@@ -132,8 +132,11 @@ model UserMembership {
 
 model Membership {
   id                 String           @id @unique @default(uuid())
-  name               String
+  level              String
+  type               String
   cost               Decimal
+  currency           String
+  durationDays       Int
   // * Relations
   membershipOffers   MembershipOffer  @relation(fields: [membershipOffersId], references: [id])
   membershipOffersId String
@@ -149,9 +152,9 @@ model MembershipOffer {
   id             String       @id @unique @default(uuid())
   name           String
   percetageOffer Decimal
-  duration       String?
   dateStart      DateTime?
   dateEnd        DateTime?
+  enabled        Boolean
   // * Relations
   memberships    Membership[]
   // * End Relations
@@ -178,7 +181,8 @@ model UserValidation {
 
 model ValidationForm {
   id                   String             @id @unique @default(uuid())
-  name                 String
+  type                 String
+  description          String
   // * Relations
   userValidation       UserValidation?
   validationFormData   ValidationFormData @relation(fields: [validationFormDataId], references: [id])
