@@ -2,33 +2,41 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { MembershipService } from './membership.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
+import { CreateMembershipOfferDto } from './dto/create-membership-offer.dto';
+import { Membership } from '@prisma/client';
 
 @Controller('membership')
 export class MembershipController {
   constructor(private readonly membershipService: MembershipService) {}
 
-  @Post()
-  create(@Body() createMembershipDto: CreateMembershipDto) {
-    return this.membershipService.create(createMembershipDto);
+  @Post('/create')
+  createMembership(@Body() createMembershipDto: CreateMembershipDto): Promise<Membership> {
+    return this.membershipService.createMembership(createMembershipDto);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Membership[]> {
     return this.membershipService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.membershipService.findOne(+id);
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.membershipService.findOne(+id);
+  // }
+
+  // @Get(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.membershipService.remove(+id);
+  // }
+
+  // * Comienzan endpoints para offers
+  @Post('/offer/create')
+  createMembershipOffer(@Body() createMembershipOfferDto: CreateMembershipOfferDto) {
+    return this.membershipService.createMembershipOffer(createMembershipOfferDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMembershipDto: UpdateMembershipDto) {
-    return this.membershipService.update(+id, updateMembershipDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.membershipService.remove(+id);
+  @Get('/offers')
+  findAllOffers() {
+    return this.membershipService.findAllOffers();
   }
 }
