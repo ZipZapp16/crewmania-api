@@ -7,9 +7,9 @@ import { Membership } from '@prisma/client';
 
 @Controller('membership')
 export class MembershipController {
-  constructor(private readonly membershipService: MembershipService) {}
+  constructor(private readonly membershipService: MembershipService) { }
 
-  @Post('/create')
+  @Post()
   createMembership(@Body() createMembershipDto: CreateMembershipDto): Promise<Membership> {
     return this.membershipService.createMembership(createMembershipDto);
   }
@@ -30,7 +30,7 @@ export class MembershipController {
   // }
 
   // * Comienzan endpoints para offers
-  @Post('/offer/create')
+  @Post('/offers')
   createMembershipOffer(@Body() createMembershipOfferDto: CreateMembershipOfferDto) {
     return this.membershipService.createMembershipOffer(createMembershipOfferDto);
   }
