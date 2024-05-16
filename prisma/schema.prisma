@@ -138,8 +138,8 @@ model Membership {
   currency           String
   durationDays       Int
   // * Relations
-  membershipOffers   MembershipOffer  @relation(fields: [membershipOffersId], references: [id])
-  membershipOffersId String
+  membershipOffers   MembershipOffer?  @relation(fields: [membershipOffersId], references: [id])
+  membershipOffersId String?
   userMembership     UserMembership[]
   // * End Relations
   createdAt          DateTime         @default(now())
