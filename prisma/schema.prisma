@@ -56,43 +56,56 @@ model User {
 }
 
 model UserOccupancy {
-  id            String      @id @unique @default(uuid())
+  id                  String             @id @unique @default(uuid())
   // * Relations
-  position      Position    @relation(fields: [positionId], references: [id])
-  positionId    String
-  Herarchy      Hierarchy   @relation(fields: [herarchyId], references: [id])
-  herarchyId    String
-  headquarter   Headquarter @relation(fields: [headquarterId], references: [id])
-  headquarterId String
-  user          User?        @relation(fields: [userId], references: [id])
-  userId        String?      @unique
+  headquarter         Headquarter        @relation(fields: [headquarterId], references: [id])
+  headquarterId       String
+  user                User?              @relation(fields: [userId], references: [id])
+  userId              String?            @unique
+  positionsHerarchy   PositionsHerarchy? @relation(fields: [positionsHerarchyId], references: [id])
+  positionsHerarchyId String
   // * End Relations
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 
   @@map("userOccupancy")
 }
 
-model Position {
-  id            String          @id @unique @default(uuid())
-  name          String
+model PositionsHerarchy {
+  id            String          @id @default(uuid())
   // * Relations
-  UserOccupancy UserOccupancy[]
+  position      Position        @relation(fields: [positionId], references: [id])
+  positionId    String
+  hierarchy     Hierarchy       @relation(fields: [hierarchyId], references: [id])
+  hierarchyId   String
+  userOccupancy UserOccupancy[]
   // * End Relations
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+
+  @@map("positionsHerarchys")
+}
+
+model Position {
+  id                String              @id @unique @default(uuid())
+  name              String
+  // * Relations
+  positionsHerarchy PositionsHerarchy[]
+  // * End Relations
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 
   @@map("positions")
 }
 
 model Hierarchy {
-  id            String          @id @unique @default(uuid())
-  name          String
+  id                String              @id @unique @default(uuid())
+  name              String
   // * Relations
-  UserOccupancy UserOccupancy[]
+  positionsHerarchy PositionsHerarchy[]
   // * End Relations
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 
   @@map("hierarchys")
 }
@@ -121,8 +134,8 @@ model UserMembership {
   // * Relations
   membership   Membership @relation(fields: [membershipId], references: [id])
   membershipId String
-  user         User?       @relation(fields: [userId], references: [id])
-  userId       String?     @unique
+  user         User?      @relation(fields: [userId], references: [id])
+  userId       String?    @unique
   // * End Relations
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -171,8 +184,8 @@ model UserValidation {
   validationFormId   String           @unique
   statusValidation   StatusValidation @relation(fields: [statusValidationId], references: [id])
   statusValidationId String
-  user               User?             @relation(fields: [userId], references: [id])
-  userId             String?           @unique
+  user               User?            @relation(fields: [userId], references: [id])
+  userId             String?          @unique
   // * End Relations
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
@@ -181,7 +194,7 @@ model UserValidation {
 }
 
 model ValidationForm {
-  id                   String             @id @unique @default(uuid())
+  id                   String              @id @unique @default(uuid())
   type                 String
   description          String
   // * Relations
@@ -189,8 +202,8 @@ model ValidationForm {
   validationFormData   ValidationFormData? @relation(fields: [validationFormDataId], references: [id])
   validationFormDataId String?
   // * End Relations
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
 
   @@map("validationForms")
 }
@@ -209,13 +222,13 @@ model StatusValidation {
 }
 
 model ValidationFormData {
-  id               String           @id @unique @default(uuid())
-  url              String
+  id             String           @id @unique @default(uuid())
+  url            String
   // * Relations
   validationForm ValidationForm[]
   // * End Relations
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@map("validationFormData")
 }
