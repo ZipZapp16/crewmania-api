@@ -44,27 +44,4 @@ export class CreateUserDto {
     @IsString()
     @IsOptional()
     firebaseToken?: string;
-
-    @IsString()
-    position: Prisma.PositionCreateNestedOneWithoutPositionInput;
-
-    @IsString()
-    @IsUUID()
-    herarchy: Prisma.HierarchyUpsertWithoutUserHerarchyInput;
-
-    @IsString()
-    @IsUUID()
-    userValidationForm: Prisma.ValidationFormCreateNestedOneWithoutUserValidationFormInput;
-
-    @IsString()
-    @IsUUID()
-    headquarter: Prisma.HeadquarterCreateNestedOneWithoutUserHeadQuarterInput;
-
-    @IsString()
-    @IsUUID()
-    statusValidation: Prisma.StatusValidationCreateNestedOneWithoutUserStatusValidationInput;
-
-    @IsString()
-    @IsUUID()
-    membership: Prisma.MembershipCreateNestedOneWithoutUserMembershipInput;
 }
