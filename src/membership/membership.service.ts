@@ -8,10 +8,7 @@ import { CreateMembershipOfferDto } from './dto/create-membership-offer.dto';
 @Injectable()
 export class MembershipService {
 
-  constructor(
-    // private jwtService: JwtService,
-    private prismaService: PrismaService
-  ) { }
+  constructor( private readonly prismaService: PrismaService ) { }
 
   async createMembership(createMembershipDto: CreateMembershipDto): Promise<Membership> {
     const { membershipOffersId, ...restOfData } = createMembershipDto;
@@ -22,9 +19,7 @@ export class MembershipService {
     };
 
     try {
-      const membership = await this.prismaService.membership.create({
-        data
-      });
+      const membership = await this.prismaService.membership.create({ data });
 
       return membership;
     } catch (error) {
@@ -39,7 +34,7 @@ export class MembershipService {
 
       return memberships;
     } catch (error) {
-      throw new BadRequestException('Error al crear membresia.');
+      throw new NotFoundException('No se encontratron membresias.');
     }
   }
 
