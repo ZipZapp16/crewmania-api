@@ -1,34 +1,82 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { OccupancyService } from './occupancy.service';
-import { CreateOccupancyDto } from './dto/create-occupancy.dto';
-import { UpdateOccupancyDto } from './dto/update-occupancy.dto';
+import { CreatePositionDto } from './dto/create-position.dto';
+import { CreateHierarchyDto } from './dto/create-hierarchy.dto';
+import { Headquarter, Hierarchy, Position, PositionsHerarchy } from '@prisma/client';
+import { CreateHeadquarterDto } from 'src/headquarter/dto/create-headquarter.dto';
+import { CreatePositionHierarchyDto } from './dto/create-position-hierarchy.dto';
 
 @Controller('occupancy')
 export class OccupancyController {
   constructor(private readonly occupancyService: OccupancyService) {}
 
-  @Post()
-  create(@Body() createOccupancyDto: CreateOccupancyDto) {
-    return this.occupancyService.create(createOccupancyDto);
+  // * Comienzan endpoitns para positions
+  @Post('/positions')
+  createPosition(@Body() createPositionDto: CreatePositionDto): Promise<Position> {
+    return this.occupancyService.createPosition(createPositionDto);
   }
 
-  @Get()
-  findAll() {
-    return this.occupancyService.findAll();
+  @Get('/positions')
+  findAllPositions(): Promise<Position[]> {
+    return this.occupancyService.findAllPositions();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.occupancyService.findOne(+id);
+  // * Comienzan endpoitns para hierarchys
+  @Post('/hierarchys')
+  createHierarchys(@Body() createHierarchyDto: CreateHierarchyDto): Promise<Hierarchy> {
+    return this.occupancyService.createHierarchys(createHierarchyDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOccupancyDto: UpdateOccupancyDto) {
-    return this.occupancyService.update(+id, updateOccupancyDto);
+  @Get('/hierarchys')
+  findAllHierarchys(): Promise<Hierarchy[]> {
+    return this.occupancyService.findAllHierarchys();
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.occupancyService.remove(+id);
+  // * Comienzan endpoints para headquartes
+  @Post('/headquartes')
+  creatHeadquarter(@Body() createHeadquarterDto: CreateHeadquarterDto): Promise<Headquarter> {
+    return this.occupancyService.creatHeadquarter(createHeadquarterDto);
   }
+
+  @Get('/headquartes')
+  findAllHeadquarters(): Promise<Headquarter[]> {
+    return this.occupancyService.findAllHeadquarters();
+  }
+
+  // * Comienzan endpoints para positionHerarchys
+  @Post('/positionHerarchys')
+  createPositionHierarchy(@Body() createPositionHierarchyDto: CreatePositionHierarchyDto) {
+    return this.occupancyService.createPositionHierarchy(createPositionHierarchyDto);
+  }
+
+  @Get('/positionHerarchys')
+  findAllPositionsHerarchys(): Promise<PositionsHerarchy[]> {
+    return this.occupancyService.findAllPositionHerarchys();
+  }
+  
+
+  // @Post()
+  // create(@Body() createOccupancyDto: CreateOccupancyDto) {
+  //   return this.occupancyService.create(createOccupancyDto);
+  // }
+
+  // @Get()
+  // findAll() {
+  //   return this.occupancyService.findAll();
+  // }
+
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.occupancyService.findOne(+id);
+  // }
+
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateOccupancyDto: UpdateOccupancyDto) {
+  //   return this.occupancyService.update(+id, updateOccupancyDto);
+  // }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.occupancyService.remove(+id);
+  // }
 }

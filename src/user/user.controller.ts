@@ -1,6 +1,9 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { UserOccupancyDto } from './dto/create-user-occupancy.dto';
+import { UserOccupancy } from '@prisma/client';
+import { UserMembershipDto } from './dto/create-user-membership.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -21,8 +24,20 @@ export class UserController {
         return this.userService.getUser(id);
     }
 
-    @Delete('user/:id')
-    deleteUser(@Param('id', ParseUUIDPipe) id: string) {
-        return this.userService.deleteUser(id);
+    // * Comienzan endpoints para userOccupancy
+    @Post('/userOccupancy')
+    createUserOccupancy(@Body() userOccupancyDto: UserOccupancyDto): Promise<UserOccupancy> {
+        return this.userService.createUserOccupancy(userOccupancyDto);
+    }
+
+    @Get('/userOccupancy')
+    findAllUserOccupancy(): Promise<UserOccupancy[]> {
+        return this.userService.findAllUserOccupancy();
+    }
+
+    // * Comienzan endpoints para userMembership
+    @Post('/userMembership')
+    createUserMembership(@Body() userMembershipDto: UserMembershipDto) {
+        return this.userService.createUserMembership(userMembershipDto);
     }
 }
