@@ -4,6 +4,7 @@ import { MembershipController } from './membership.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
+  exports: [MembershipService],
   controllers: [MembershipController],
   providers: [MembershipService],
   imports: [PrismaModule]
