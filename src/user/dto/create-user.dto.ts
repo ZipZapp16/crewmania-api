@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { Type } from "class-transformer";
 import { IsDate, IsEmail, IsOptional, IsString, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
 
 
@@ -28,6 +29,7 @@ export class CreateUserDto {
     password: string;
 
     @IsDate()
+    @Type(() => Date)
     dateAdmission: Date; 
 
     @IsString()
