@@ -28,7 +28,7 @@ export class MembershipService {
     }
   }
 
-  async findAll(): Promise<Membership[]> {
+  async findAllMembership(): Promise<Membership[]> {
     try {
       const memberships = await this.prismaService.membership.findMany();
 
@@ -38,8 +38,14 @@ export class MembershipService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} membership`;
+  async findOneMembership(id: string): Promise<Membership> {
+    try {
+      const membership = await this.prismaService.membership.findUnique({ where: { id }});
+
+      return membership;
+    } catch (error) {
+      throw new NotFoundException('No se encontratron membresias.');
+    }
   }
 
   update(id: number, updateMembershipDto: UpdateMembershipDto) {
