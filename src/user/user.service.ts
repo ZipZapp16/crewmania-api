@@ -1,15 +1,18 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Membership, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
+import * as luxonTime from 'luxon';
 import { UserResponse } from './interfaces/userResponse.interface';
 import { UserOccupancyDto } from './dto/create-user-occupancy.dto';
 import { UserMembershipDto } from './dto/create-user-membership.dto';
+import { MembershipService } from 'src/membership/membership.service';
 
 @Injectable()
 export class UserService {
     constructor(
-        private prismaService: PrismaService
+        private prismaService: PrismaService,
+        private readonly membershipService: MembershipService
     ) { }
 
     async deleteUser(id: string) {
@@ -112,23 +115,25 @@ export class UserService {
         try {
             const { userId, membershipId } = userMembershipDto;
 
-            const dateStart: Date = new Date();
+            // * Obtiene la membresia elegida
+            const membership: Membership = await this.membershipService.findOneMembership(membershipId);
 
-            // TODO: Buscar id de membresia y calcular vigencia.
-            const dateEnd: Date = new Date();
-
+            // * Obtiene la fecha y hora actual y le suma la cantidad de dias de acuerdo a la membresia seleccionada.
+            const dateStart: luxonTime.DateTime<true> = luxonTime.DateTime.now();
+            const dateEnd: luxonTime.DateTime<true> = dateStart.plus({ days: membership.durationDays })
+        
+            // * Campos para la creacion de la membresia seleccionada por el usuario.
             const data: Prisma.UserMembershipCreateInput = {
-                dateStart,
-                dateEnd,
+                dateStart: dateStart.toISO(),
+                dateEnd: dateEnd.toISO(),
                 renovation: false,
                 membership: membershipId ? { connect: { id: membershipId } } : undefined,
                 user: userId ? { connect: { id: userId } } : undefined
             };
 
+            // * Se crea y guardan los datos de la membresia seleccionada por el usuario.
             const newUserMembership = await this.prismaService.userMembership.create({ data });
-
             return newUserMembership;
-
         } catch (error) {
             console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
