@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { MembershipService } from './membership.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
@@ -15,14 +15,14 @@ export class MembershipController {
   }
 
   @Get()
-  findAll(): Promise<Membership[]> {
-    return this.membershipService.findAll();
+  findAllMembership(): Promise<Membership[]> {
+    return this.membershipService.findAllMembership();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.membershipService.findOne(+id);
-  // }
+  @Get(':id')
+  findOneMembership(@Param('id', ParseUUIDPipe) id: string): Promise<Membership> {
+    return this.membershipService.findOneMembership(id);
+  }
 
   // @Get(':id')
   // remove(@Param('id') id: string) {
