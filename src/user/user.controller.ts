@@ -36,7 +36,7 @@ export class UserController {
     }
 
     // * Comienzan endpoints para userMembership
-    @Post('/userMembership')
+    @Post('/membership')
     createUserMembership(@Body() userMembershipDto: UserMembershipDto) {
         return this.userService.createUserMembership(userMembershipDto);
     }
