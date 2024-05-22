@@ -139,4 +139,56 @@ export class UserService {
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
         }
     }
+
+    // * Devuelve todos los registros existentes en la tabla UserMembership
+    async getAllUserMemberships(): Promise<UserMembership[]> {
+        try {
+            const userMemberships = await this.prismaService.userMembership.findMany();
+            return userMemberships;
+        } catch (error) {
+            console.log(error)
+            throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+        }
+    }
+
+    // * Devuelve todos los registros existentes en la tabla UserMembership de acuerdo con el Id del usuario
+    async getMembershipsByUserId(userId: string): Promise<UserMembership[]> {
+        try {
+            const membershipByUserId = await this.prismaService.userMembership.findMany({ where: { userId } });
+            return membershipByUserId;
+        } catch (error) {
+            console.log(error)
+            throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+        }
+    }
+
+    // * Verifica la validacion de la membresia del usuario
+    async getValidityMembership(userId: string): Promise<UserMembership[]> {
+        try {
+            const userMemberships: UserMembership[] = await this.getMembershipsByUserId(userId);
+
+            // const membership = await this.membershipService.findMembership(membershipId);
+
+            const today: luxonTime.DateTime<true> = luxonTime.DateTime.now();
+
+            let totalsDays: number = 0;
+
+            let response = [];
+
+            userMemberships.forEach(({ dateEnd, membershipId, userId }) => {
+                const membershipDateEnd = luxonTime.DateTime.fromISO(dateEnd.toISOString());
+                const membershipDays = today.diff(membershipDateEnd, 'days');
+
+                let remainingDays = parseInt(membershipDays.days.toString(), 10) * -1;
+
+                response.push({ remainingDays: remainingDays > 0 ? remainingDays : 0, membershipId, userId}); 
+            });
+
+            console.log(response)
+            return userMemberships;
+        } catch (error) {
+            console.log(error)
+            throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+        }
+    }
 }
