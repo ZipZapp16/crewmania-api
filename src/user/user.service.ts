@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Membership, Prisma } from '@prisma/client';
+import { Membership, Prisma, UserMembership } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import * as luxonTime from 'luxon';
@@ -41,7 +41,7 @@ export class UserService {
         ];
     }
 
-    async getAllUsers(): Promise<UserResponse[]> {
+    async findAllUsers(): Promise<UserResponse[]> {
         const users = await this.prismaService.user.findMany();
 
         if (!users) {
@@ -57,7 +57,7 @@ export class UserService {
         ];
     }
 
-    async getUser(id: string): Promise<UserResponse[]> {
+    async findUser(id: string): Promise<UserResponse[]> {
         const user = await this.prismaService.user.findUnique({
             where: {
                 id
@@ -111,17 +111,17 @@ export class UserService {
     }
 
     // * Comienzan endpoints para userMembership
-    async createUserMembership(userMembershipDto: UserMembershipDto) {
+    async createUserMembership(userMembershipDto: UserMembershipDto): Promise<UserMembership> {
         try {
             const { userId, membershipId } = userMembershipDto;
 
             // * Obtiene la membresia elegida
-            const membership: Membership = await this.membershipService.findOneMembership(membershipId);
+            const membership: Membership = await this.membershipService.findMembership(membershipId);
 
             // * Obtiene la fecha y hora actual y le suma la cantidad de dias de acuerdo a la membresia seleccionada.
             const dateStart: luxonTime.DateTime<true> = luxonTime.DateTime.now();
             const dateEnd: luxonTime.DateTime<true> = dateStart.plus({ days: membership.durationDays })
-        
+
             // * Campos para la creacion de la membresia seleccionada por el usuario.
             const data: Prisma.UserMembershipCreateInput = {
                 dateStart: dateStart.toISO(),
