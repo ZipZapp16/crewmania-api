@@ -21,7 +21,7 @@ export class MembershipController {
 
   @Get(':id')
   findOneMembership(@Param('id', ParseUUIDPipe) id: string): Promise<Membership> {
-    return this.membershipService.findOneMembership(id);
+    return this.membershipService.findMembership(id);
   }
 
   // @Get(':id')
