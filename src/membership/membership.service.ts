@@ -38,7 +38,7 @@ export class MembershipService {
     }
   }
 
-  async findOneMembership(id: string): Promise<Membership> {
+  async findMembership(id: string): Promise<Membership> {
     try {
       const membership = await this.prismaService.membership.findUnique({ where: { id }});
 
