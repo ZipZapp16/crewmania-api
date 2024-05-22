@@ -2,8 +2,9 @@ import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nest
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { UserOccupancyDto } from './dto/create-user-occupancy.dto';
-import { UserOccupancy } from '@prisma/client';
+import { User, UserMembership, UserOccupancy } from '@prisma/client';
 import { UserMembershipDto } from './dto/create-user-membership.dto';
+import { UserResponse } from './interfaces/userResponse.interface';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -15,13 +16,13 @@ export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get()
-    getAllUsers() {
-        return this.userService.getAllUsers();
+    getAllUsers(): Promise<UserResponse[]> {
+        return this.userService.findAllUsers();
     }
 
     @Get('user/:id')
-    getUser(@Param('id', ParseUUIDPipe) id: string) {
-        return this.userService.getUser(id);
+    findUser(@Param('id', ParseUUIDPipe) id: string) {
+        return this.userService.findUser(id);
     }
 
     // * Comienzan endpoints para userOccupancy
@@ -37,7 +38,22 @@ export class UserController {
 
     // * Comienzan endpoints para userMembership
     @Post('/membership')
-    createUserMembership(@Body() userMembershipDto: UserMembershipDto) {
+    createUserMembership(@Body() userMembershipDto: UserMembershipDto): Promise<UserMembership> {
         return this.userService.createUserMembership(userMembershipDto);
+    }
+
+    @Get('/memberships')
+    getAllUserMemberships(): Promise<UserMembership[]> {
+        return this.userService.getAllUserMemberships();
+    }
+
+    @Get('/:userId/memberships')
+    getMembershipsByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserMembership[]> {
+        return this.userService.getMembershipsByUserId(userId);
+    }
+
+    @Get('/:userId/memberships/validity')
+    getValidityMembership(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserMembership[]> {
+        return this.userService.getValidityMembership(userId);
     }
 }
