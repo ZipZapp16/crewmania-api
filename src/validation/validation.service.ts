@@ -19,7 +19,7 @@ export class ValidationService {
     }
   }
 
-  async findAll() {
+  async findAllValidationForms() {
     try {
       const validations = await this.prismaService.validationForm.findMany();
 

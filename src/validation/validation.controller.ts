@@ -17,7 +17,7 @@ export class ValidationController {
 
   @Get('/forms')
   findAll(): Promise<ValidationForm[]> {
-    return this.validationService.findAll();
+    return this.validationService.findAllValidationForms();
   }
 
   // @Get(':id')
