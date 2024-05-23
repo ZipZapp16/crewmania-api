@@ -187,6 +187,7 @@ model UserValidation {
   user               User?            @relation(fields: [userId], references: [id])
   userId             String?          @unique
   // * End Relations
+  url                String
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
 
@@ -199,7 +200,6 @@ model ValidationForm {
   description          String
   // * Relations
   userValidation       UserValidation?
-  validationFormData   ValidationFormData? @relation(fields: [validationFormDataId], references: [id])
   validationFormDataId String?
   // * End Relations
   createdAt            DateTime            @default(now())
@@ -219,16 +219,4 @@ model StatusValidation {
   updatedAt      DateTime         @updatedAt
 
   @@map("statusValidations")
-}
-
-model ValidationFormData {
-  id             String           @id @unique @default(uuid())
-  url            String
-  // * Relations
-  validationForm ValidationForm[]
-  // * End Relations
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-
-  @@map("validationFormData")
 }
