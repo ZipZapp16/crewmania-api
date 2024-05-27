@@ -4,22 +4,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Membership, MembershipOffer, Prisma } from '@prisma/client';
 import { CreateMembershipOfferDto } from './dto/create-membership-offer.dto';
 import { MembershipOfferResponse, MembershipResponse } from './interfaces';
+import { CreateOfferDto } from './dto';
+import { OfferResponse } from './interfaces/offer-response.interface';
+import { FindMembershipOfferResponse } from './interfaces/membership-offer-response.interface';
 
 @Injectable()
 export class MembershipService {
 
-  constructor( private readonly prismaService: PrismaService ) { }
+  constructor(private readonly prismaService: PrismaService) { }
 
   async createMembership(createMembershipDto: CreateMembershipDto): Promise<MembershipResponse> {
-    const { membershipOffersId, ...restOfData } = createMembershipDto;
-
-    const data: Prisma.MembershipCreateInput = {
-      ...restOfData,
-      membershipOffers: membershipOffersId ? { connect: { id: membershipOffersId }} : undefined
-    };
 
     try {
-      const membership = await this.prismaService.membership.create({ data });
+      const membership = await this.prismaService.membership.create({ data: createMembershipDto });
 
       return {
         status: 'ok',
@@ -48,7 +45,7 @@ export class MembershipService {
 
   async findMembership(id: string): Promise<MembershipResponse> {
     try {
-      const membership = await this.prismaService.membership.findUnique({ where: { id }});
+      const membership = await this.prismaService.membership.findUnique({ where: { id } });
 
       return {
         status: 'ok',
@@ -61,35 +58,108 @@ export class MembershipService {
   }
 
   // * Comienzan logica para offers
-  async createMembershipOffer(createMembershipOfferDto: CreateMembershipOfferDto): Promise<MembershipOfferResponse> {
+  async createOffer(createOfferDto: CreateOfferDto): Promise<OfferResponse> {
     try {
-      const membershipOffer = await this.prismaService.membershipOffer.create({
-        data: createMembershipOfferDto
+      const offer = await this.prismaService.offer.create({
+        data: createOfferDto
       });
 
       return {
         status: 'ok',
         message: 'success',
-        data: membershipOffer
+        data: offer
       };
     } catch (error) {
       throw new BadRequestException(`Error al crear membresia. ${error}`);
     }
   }
 
-  async findAllOffers(): Promise<MembershipOfferResponse> {
+  async findAllOffers(): Promise<OfferResponse> {
     try {
-      const offers = await this.prismaService.membershipOffer.findMany();
-      
+      const offers = await this.prismaService.offer.findMany();
+
       return {
         status: 'ok',
         message: 'success',
         data: offers
       };
     } catch (error) {
-     console.log(error) 
+      console.log(error)
+      throw new NotFoundException('No hay ofertas registradas.');
+    }
+  }
 
-     throw new NotFoundException('No hay ofertas registradas.');
+  async findOffer(id: string): Promise<OfferResponse> {
+    try {
+      const offer = await this.prismaService.offer.findMany({ where: { id } });
+
+      return {
+        status: 'ok',
+        message: 'success',
+        data: offer
+      }
+    } catch (error) {
+      throw new NotFoundException('No se encontro la oferta solicitada.');
+    }
+  }
+
+  async createMembershipOffer(createMembershipOfferDto: CreateMembershipOfferDto): Promise<MembershipOfferResponse> {
+    try {
+      const { membershipId, offerId } = createMembershipOfferDto;
+
+      const data: Prisma.MembershipOfferCreateInput = {
+        offer: offerId ? { connect: { id: offerId } } : undefined,
+        membership: membershipId ? { connect: { id: membershipId } } : undefined,
+      }
+
+      const membershipOffer = await this.prismaService.membershipOffer.create({ data })
+
+      return {
+        status: 'ok',
+        message: "success",
+        data: membershipOffer
+      }
+    } catch (error) {
+      console.log(error)
+      throw new BadRequestException("Can't create the membership offer.");
+    }
+  }
+
+  async findAllMembershipOffers(): Promise<MembershipOfferResponse> {
+    try {
+      const membershipOffer = await this.prismaService.membershipOffer.findMany();
+
+      return {
+        status: 'ok',
+        message: "success",
+        data: membershipOffer
+      }
+    } catch (error) {
+      throw new NotFoundException("Can't reach the membership offer field requested.", error);
+    }
+  }
+
+  async findMembershipOffer(membershipId: string): Promise<FindMembershipOfferResponse> {
+    try {
+      const membershipOffer = await this.prismaService.membershipOffer.findMany({ where: { membershipId } });
+
+      let mOffers = [];
+
+      membershipOffer.map(async mo => {
+        mOffers.push({ 
+          id: mo.id,
+          membership: await this.findMembership(membershipId),
+          offer: await this.findOffer(mo.offerId)
+        })
+      })
+
+      return {
+        status: 'ok',
+        message: "success",
+        data: mOffers
+      }
+    } catch (error) {
+      throw new NotFoundException("Can't reach the membership offer field requested.", error);
     }
   }
 }
