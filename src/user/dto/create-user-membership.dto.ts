@@ -1,9 +1,8 @@
-import { Type } from "class-transformer";
-import { IsBoolean, IsDate, IsUUID } from "class-validator";
+import { IsUUID } from "class-validator";
 
 export class CreateUserMembershipDto {
     @IsUUID()
-    membershipId: string;
+    membershipOfferId: string;
 
     @IsUUID()
     userId: string;
