@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from
 import { MembershipService } from './membership.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { CreateMembershipOfferDto } from './dto/create-membership-offer.dto';
-import { Membership } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
-import { MembershipOfferResponse, MembershipResponse } from './interfaces';
+import { MembershipOfferResponse, MembershipResponse, OfferResponse } from './interfaces';
+import { CreateOfferDto } from './dto';
+import { FindMembershipOfferResponse } from './interfaces/membership-offer-response.interface';
 
 @ApiTags('Membership')
 @Controller('membership')
@@ -22,18 +23,34 @@ export class MembershipController {
   }
 
   @Get(':id')
-  findOneMembership(@Param('id', ParseUUIDPipe) id: string): Promise<MembershipResponse> {
+  findMembership(@Param('id', ParseUUIDPipe) id: string): Promise<MembershipResponse> {
     return this.membershipService.findMembership(id);
   }
 
   // * Comienzan endpoints para offers
   @Post('/offers')
+  createOffer(@Body() createOfferDto: CreateOfferDto): Promise<OfferResponse> {
+    return this.membershipService.createOffer(createOfferDto);
+  }
+
+  @Get('/offers')
+  findAllOffers(): Promise<OfferResponse> {
+    return this.membershipService.findAllOffers();
+  }
+
+  // * Comienzan endpoints para membership offers
+  @Post('/membership-offers')
   createMembershipOffer(@Body() createMembershipOfferDto: CreateMembershipOfferDto): Promise<MembershipOfferResponse> {
     return this.membershipService.createMembershipOffer(createMembershipOfferDto);
   }
 
-  @Get('/offers')
-  findAllOffers(): Promise<MembershipOfferResponse> {
-    return this.membershipService.findAllOffers();
+  @Get('/membership-offers')
+  findAllMembershipOffers(): Promise<MembershipOfferResponse> {
+    return this.membershipService.findAllMembershipOffers();
+  }
+
+  @Get('/membership-offer/:membershipId')
+  findMembershipOffer(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<FindMembershipOfferResponse> {
+    return this.membershipService.findMembershipOffer(membershipId);
   }
 }
