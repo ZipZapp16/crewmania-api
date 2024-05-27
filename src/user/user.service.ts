@@ -3,10 +3,14 @@ import { Membership, Prisma, UserMembership } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import * as luxonTime from 'luxon';
-import { UserResponse } from './interfaces/userResponse.interface';
-import { UserOccupancyDto } from './dto/create-user-occupancy.dto';
-import { UserMembershipDto } from './dto/create-user-membership.dto';
+import { UserResponse } from './interfaces/user-response.interface';
 import { MembershipService } from 'src/membership/membership.service';
+import { UserValidationResponse } from './interfaces/user-validation-response.interface';
+import { CreateUserValidationDto } from './dto/create-user-validation';
+import { UserMembershipResponse } from './interfaces/user-membership-response.interface';
+import { CreateUserMembershipDto, CreateUserOccupancyDto } from './dto';
+import { MembershipResponse } from 'src/membership/interfaces';
+import { UserOccupancyResponse } from './interfaces/user-occupancy-response.interface';
 
 @Injectable()
 export class UserService {
@@ -41,23 +45,21 @@ export class UserService {
         ];
     }
 
-    async findAllUsers(): Promise<UserResponse[]> {
+    async findAllUsers(): Promise<UserResponse> {
         const users = await this.prismaService.user.findMany();
 
         if (!users) {
             throw new NotFoundException('NO existen users registrados.');
         }
 
-        return [
-            {
-                status: "ok",
-                message: "success",
-                data: users
-            }
-        ];
+        return {
+            status: "ok",
+            message: "success",
+            data: users
+        }
     }
 
-    async findUser(id: string): Promise<UserResponse[]> {
+    async findUser(id: string): Promise<UserResponse> {
         const user = await this.prismaService.user.findUnique({
             where: {
                 id
@@ -69,17 +71,15 @@ export class UserService {
             throw new NotFoundException('NO existe el user solicitado.');
         }
 
-        return [
-            {
-                status: "ok",
-                message: "success",
-                data: user
-            }
-        ];
+        return {
+            status: "ok",
+            message: "success",
+            data: user
+        };
     }
 
     // * Comienzan endpoints para userOccupancy
-    async createUserOccupancy(userOccupancyDto: UserOccupancyDto) {
+    async createUserOccupancy(userOccupancyDto: CreateUserOccupancyDto): Promise<UserOccupancyResponse> {
         try {
 
             const { headquarterId, positionHerarchyId, userId } = userOccupancyDto;
@@ -91,19 +91,25 @@ export class UserService {
             };
 
             const newUserOcc = await this.prismaService.userOccupancy.create({ data });
-
-            return newUserOcc;
+            return {
+                status: "ok",
+                message: "success",
+                data: newUserOcc
+            };
         } catch (error) {
             console.log(error)
             throw new BadRequestException(`Error al crear los datos del usuario. ${error}`);
         }
     }
 
-    async findAllUserOccupancy() {
+    async findAllUserOccupancy(): Promise<UserOccupancyResponse> {
         try {
             const usersOccupancy = await this.prismaService.userOccupancy.findMany();
-
-            return usersOccupancy;
+            return {
+                status: "ok",
+                message: "success",
+                data: usersOccupancy
+            };
         } catch (error) {
             console.log(error)
             throw new NotFoundException(`No se encontraron datos del usuario. ${error}`);
@@ -111,16 +117,16 @@ export class UserService {
     }
 
     // * Comienzan endpoints para userMembership
-    async createUserMembership(userMembershipDto: UserMembershipDto): Promise<UserMembership> {
+    async createUserMembership(userMembershipDto: CreateUserMembershipDto): Promise<UserMembershipResponse> {
         try {
             const { userId, membershipId } = userMembershipDto;
 
             // * Obtiene la membresia elegida
-            const membership: Membership = await this.membershipService.findMembership(membershipId);
+            const membership: MembershipResponse = await this.membershipService.findMembership(membershipId);
 
             // * Obtiene la fecha y hora actual y le suma la cantidad de dias de acuerdo a la membresia seleccionada.
             const dateStart: luxonTime.DateTime<true> = luxonTime.DateTime.now();
-            const dateEnd: luxonTime.DateTime<true> = dateStart.plus({ days: membership.durationDays })
+            const dateEnd: luxonTime.DateTime<true> = dateStart.plus({ days: membership.data['durationDays'] })
 
             // * Campos para la creacion de la membresia seleccionada por el usuario.
             const data: Prisma.UserMembershipCreateInput = {
@@ -133,7 +139,11 @@ export class UserService {
 
             // * Se crea y guardan los datos de la membresia seleccionada por el usuario.
             const newUserMembership = await this.prismaService.userMembership.create({ data });
-            return newUserMembership;
+            return {
+                status: 'ok',
+                message: 'success',
+                data: newUserMembership
+            };
         } catch (error) {
             console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
@@ -141,10 +151,14 @@ export class UserService {
     }
 
     // * Devuelve todos los registros existentes en la tabla UserMembership
-    async getAllUserMemberships(): Promise<UserMembership[]> {
+    async findAllUserMemberships(): Promise<UserMembershipResponse> {
         try {
             const userMemberships = await this.prismaService.userMembership.findMany();
-            return userMemberships;
+            return {
+                status: 'ok',
+                message: 'success',
+                data: userMemberships
+            };
         } catch (error) {
             console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
@@ -152,10 +166,14 @@ export class UserService {
     }
 
     // * Devuelve todos los registros existentes en la tabla UserMembership de acuerdo con el Id del usuario
-    async getMembershipsByUserId(userId: string): Promise<UserMembership[]> {
+    async findMembershipsByUserId(userId: string): Promise<UserMembershipResponse> {
         try {
             const membershipByUserId = await this.prismaService.userMembership.findMany({ where: { userId } });
-            return membershipByUserId;
+            return {
+                status: 'ok',
+                message: 'success',
+                data: membershipByUserId
+            };
         } catch (error) {
             console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
@@ -163,9 +181,9 @@ export class UserService {
     }
 
     // * Verifica la validacion de la membresia del usuario
-    async getValidityMembership(userId: string): Promise<UserMembership[]> {
+    async findValidityMembership(userId: string): Promise<UserMembershipResponse> {
         try {
-            const userMemberships: UserMembership[] = await this.getMembershipsByUserId(userId);
+            const userMemberships: UserMembershipResponse = await this.findMembershipsByUserId(userId);
 
             // const membership = await this.membershipService.findMembership(membershipId);
 
@@ -175,20 +193,95 @@ export class UserService {
 
             let response = [];
 
-            userMemberships.forEach(({ dateEnd, membershipId, userId }) => {
-                const membershipDateEnd = luxonTime.DateTime.fromISO(dateEnd.toISOString());
-                const membershipDays = today.diff(membershipDateEnd, 'days');
+            // userMemberships.data.forEach(({ dateEnd, membershipId, userId }) => {
+            //     const membershipDateEnd = luxonTime.DateTime.fromISO(dateEnd.toISOString());
+            //     const membershipDays = today.diff(membershipDateEnd, 'days');
 
-                let remainingDays = parseInt(membershipDays.days.toString(), 10) * -1;
+            //     let remainingDays = parseInt(membershipDays.days.toString(), 10) * -1;
 
-                response.push({ remainingDays: remainingDays > 0 ? remainingDays : 0, membershipId, userId}); 
-            });
+            //     response.push({ remainingDays: remainingDays > 0 ? remainingDays : 0, membershipId, userId });
+            // });
 
-            console.log(response)
-            return userMemberships;
+            // console.log(response)
+            // return userMemberships;
+
+            return {
+                status: 'ok',
+                message: 'success',
+                data: []
+            };
         } catch (error) {
             console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+        }
+    }
+
+    async createUserValidation(createUserValidationDto: CreateUserValidationDto): Promise<UserValidationResponse> {
+        try {
+            const { statusValidationId, userId, validationFormId, url } = createUserValidationDto;
+
+            const data: Prisma.UserValidationCreateInput = {
+                statusValidation: statusValidationId ? { connect: { id: statusValidationId } } : undefined,
+                validationForm: validationFormId ? { connect: { id: validationFormId } } : undefined,
+                user: userId ? { connect: { id: userId } } : undefined,
+                url
+            }
+
+            const userValidation = await this.prismaService.userValidation.create({ data });
+
+            return {
+                status: "ok",
+                message: "success",
+                data: userValidation
+            };
+        } catch (error) {
+            console.log(error)
+            throw new BadRequestException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+        }
+    }
+
+    async findAllUserValidations(): Promise<UserValidationResponse> {
+        try {
+            const userValidations = await this.prismaService.userValidation.findMany();
+
+            return {
+                status: "ok",
+                message: "success",
+                data: userValidations
+            };
+        } catch (error) {
+            console.log(error)
+            throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+        }
+    }
+
+    async findUserValidation(term: string): Promise<UserValidationResponse> {
+        const patronUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+        let validation = null;
+
+        if (patronUUID.test(term)) {
+            validation = await this.prismaService.userValidation.findUnique({
+                where: {
+                    id: term
+                }
+            })
+
+            if (!validation) {
+                validation = await this.prismaService.userValidation.findUnique({
+                    where: {
+                        userId: term
+                    }
+                });
+            }
+
+            return {
+                status: "ok",
+                message: "success",
+                data: validation
+            }
+        } else {
+            throw new BadRequestException('El termino de busqueda NO es un UUID valido.');
         }
     }
 }

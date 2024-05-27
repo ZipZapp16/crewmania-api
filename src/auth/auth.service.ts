@@ -5,7 +5,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtPayload } from './interfaces/jwt-payload';
 import * as bcryptjs from 'bcryptjs';
 import { Prisma } from '@prisma/client';
-import { UserResponse } from 'src/user/interfaces/userResponse.interface';
+import { UserResponse } from 'src/user/interfaces/user-response.interface';
+import { AuthResponse } from './interfaces/auth-response.interface';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,7 @@ export class AuthService {
   ) { }
 
   // * Funcion que inicia sesion
-  async authUser(authUserDto: AuthUserDto) {
+  async authUser(authUserDto: AuthUserDto): Promise<AuthResponse> {
     try {
       const { email, password } = authUserDto;
 
@@ -38,20 +39,21 @@ export class AuthService {
 
       const fullname = `${restOfData.name} ${restOfData.lastname} ${restOfData.secondLastname}`;
 
-      return [
-        {
+      return {
+        status: "ok",
+        message: "success",
+        data: {
           ...restOfData,
-          fullname,
           token: this.getJWT({ id: restOfData.id, email: restOfData.email, fullname })
         }
-      ];
+      }
     } catch (error) {
       throw new BadRequestException(`Se genero un error al realizar la solicitud: ${error.message}.`);
     }
   }
 
   // * Funcion que registra un nuevo usuario
-  async registerUser(createUserDto: Prisma.UserCreateInput): Promise<UserResponse[]> {
+  async registerUser(createUserDto: Prisma.UserCreateInput): Promise<UserResponse> {
 
     try {
       const { email, password, dateAdmission, ...restOfData } = createUserDto;
@@ -74,20 +76,15 @@ export class AuthService {
       });
 
 
-      return [
-        {
-          status: "ok",
-          message: "success",
-          data: user
-        }
-      ];
+      return {
+        status: "ok",
+        message: "success",
+        data: user
+      }
 
     } catch (error) {
       console.log(error)
-
-      // if (isExistUser) {
-      //   throw new BadRequestException('Ya existe un usuario registrado con ese correo.');
-      // }
+      throw new BadRequestException('Ya existe un usuario registrado con ese correo.');
     }
   }
 
