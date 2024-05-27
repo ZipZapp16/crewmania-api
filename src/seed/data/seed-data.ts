@@ -1,50 +1,106 @@
+interface seedData {
+    positions: Position[];
+    hierarchies: Hierarchy[];
+    headquarters: Headquarter[];
+    validationForm: ValidationForm[];
+    statusValidation: statusValidation[];
+    memberships: Membership[];
+    membershipOffer: Offer[];
+}
 
-import { Headquarter } from "src/headquarter/interfaces/headquarter.interface";
-import { Hierarchy } from "src/occupancy/interfaces/herarchy.interface";
-import { MembershipOffer } from "src/membership/interfaces/membershipOffer.interface";
-import { Membership } from "src/membership/interfaces/membership.interface";
-import { Position } from "src/occupancy/interfaces/position.interface";
-import { statusType, statusValidation } from "src/validation/interfaces/status-validation.interface";
-import { VaidationTypesValues, ValidationForm } from "src/validation/interfaces/validationForm.interface";
-
+export interface Position {
+    name: string;
+}
 
 export const positions: Position[] = [
     {
-        id: "f6dd8941-abad-4b07-84ac-344cd6447013",
         name: "Piloto",
-        description: "Piloto a cargo del vuelo."
     },
     {
-        id: "00c24171-2976-4e48-8544-44ed04c7278c",
         name: "Sobrecargo",
-        description: "Encargado de la parte operativa de un avión y de brindar atención a quienes viajan en él"
     }
 ];
+
+export interface Hierarchy {
+    name: string;
+}
 
 export const Hierarchys: Hierarchy[] = [
     // * Pilotos
     {
-        id: "43cd42e5-0aab-487c-84cf-d0557d1f5204",
         name: "Cap.",
-        positionId: "f6dd8941-abad-4b07-84ac-344cd6447013",
     },
     {
-        id: "3ce7c80d-ee05-4a07-a9fa-ac94bc3ac810",
-        name: "P.O.",
-        positionId: "f6dd8941-abad-4b07-84ac-344cd6447013",
+        name: "P.O."
     },
     // * Sobrecargo
     {
-        id: "54fe3592-696e-444d-946f-51b10564ebc4",
-        name: "ESB",
-        positionId: "00c24171-2976-4e48-8544-44ed04c7278c",
+        name: "ESB"
     },
     {
-        id: "861c855c-2aa6-4c7c-9d95-dcae81d3a465",
-        name: "SOB",
-        positionId: "00c24171-2976-4e48-8544-44ed04c7278c",
+        name: "SOB"
     }
 ];
+
+export interface Headquarter {
+    name: string;
+    code: string;
+    country: string;
+    state: string;
+    city: string;
+}
+
+export const Headquarters: Headquarter[] = [
+    {
+        name: "Aereopuerto de la Ciudad de Mexico",
+        code: "MEX",
+        country: "Mexico",
+        state: "Mexico",
+        city: "Ciudad de Mexico"
+    },
+    {
+        name: "Aeropuerto de Lieja",
+        code: "LGG",
+        country: "Bélgica",
+        state: "Región Valona",
+        city: "Lieja"
+    },
+    {
+        name: "Aeropuerto de Lanzarote César Manrique",
+        code: "ACE",
+        country: "España",
+        state: "Islas Canarias",
+        city: "Lanzarote"
+    },
+    {
+        name: "Aeroparque Jorge Newbery",
+        code: "AEP",
+        country: "Argentina",
+        state: "Buenos Aires",
+        city: "Buenos Aires"
+    },
+    {
+        name: "Aeropuerto de Ámsterdam-Schiphol",
+        code: "AMS",
+        country: "Países Bajos",
+        state: "Holanda Septentrional",
+        city: "Ámsterdam"
+    }
+];
+
+export enum VaidationTypesValues {
+    Profile = 'Profile',
+    SelfiePhotograph = 'SelfiePhotograph',
+    GroupalPhotograph = 'GroupalPhotograph'
+}
+
+export type VaidationTypes = VaidationTypesValues.Profile | VaidationTypesValues.SelfiePhotograph | VaidationTypesValues.GroupalPhotograph;
+
+export interface ValidationForm {
+    id?: string;
+    type: VaidationTypes;
+    description: string;
+}
 
 export const ValidationForms: ValidationForm[] = [
     {
@@ -61,13 +117,16 @@ export const ValidationForms: ValidationForm[] = [
     },
 ];
 
-export const Headquarters: Headquarter[] = [
-    {
-        name: "Aereopuerto de la Ciudad de Mexico",
-        code: '',
-        location: "Ciudad de Mexico"
-    }
-];
+export enum statusType {
+    InProcess = 'En curso',
+    success = 'Success',
+    declined = 'Declined'
+}
+
+export interface statusValidation {
+    type: statusType;
+    reason: string;
+}
 
 export const StatusValidation: statusValidation[] = [
     {
@@ -95,6 +154,26 @@ export const StatusValidation: statusValidation[] = [
         reason: "Tu cuenta se ha verificado exitosamente"
     },
 ];
+
+// * Spanish
+type ValidLvlSusciptionsSP = 'Gratuita' | 'Oro' | 'Platino' | 'Diamante';
+type ValidDurationSuscriptionsSP = 'Semanal' | 'Mensual' | 'Semestral' | 'Anual';
+
+// * English
+type ValidLevelSusciptionsEN = 'Free trial' | 'Gold' | 'Platinum' | 'Diamond';
+type ValidDurationSuscriptionsEN = 'Weekly' | 'Monthly' | 'Half-yearly' | 'Anual';
+
+type ValidCurrencies = 'MXN' | 'USD';
+
+export interface Membership {
+    id?: string;
+    level: ValidLvlSusciptionsSP | ValidLevelSusciptionsEN;
+    type: ValidDurationSuscriptionsSP | ValidDurationSuscriptionsEN;
+    cost: number;
+    durationDays: number;
+    currency: ValidCurrencies;
+    membershipOfferId?: string;
+}
 
 export const Memberships: Membership[] = [
     {
@@ -130,21 +209,21 @@ export const Memberships: Membership[] = [
         type: "Semestral",
         cost: 399.0,
         currency: "MXN",
-        durationDays: 30
+        durationDays: 180
     },
     {
         level: "Platino",
         type: "Semestral",
         cost: 499.0,
         currency: "MXN",
-        durationDays: 30
+        durationDays: 180
     },
     {
         level: "Diamante",
         type: "Semestral",
         cost: 699.0,
         currency: "MXN",
-        durationDays: 30
+        durationDays: 180
     },
     {
         level: "Oro",
@@ -165,7 +244,7 @@ export const Memberships: Membership[] = [
         type: "Anual",
         cost: 999.0,
         currency: "MXN",
-        durationDays: 372
+        durationDays: 365
     },
     // * Empieza ingles
     {
@@ -201,21 +280,21 @@ export const Memberships: Membership[] = [
         type: "Half-yearly",
         cost: 19.95,
         currency: "USD",
-        durationDays: 365
+        durationDays: 180
     },
     {
         level: "Platinum",
         type: "Half-yearly",
         cost: 24.95,
         currency: "USD",
-        durationDays: 365
+        durationDays: 180
     },
     {
-        level: "Diamante",
+        level: "Diamond",
         type: "Half-yearly",
         cost: 34.95,
         currency: "USD",
-        durationDays: 372
+        durationDays: 180
     },
     {
         level: "Oro",
@@ -232,15 +311,23 @@ export const Memberships: Membership[] = [
         durationDays: 365
     },
     {
-        level: "Diamante",
+        level: "Diamond",
         type: "Anual",
         cost: 49.95,
         currency: "USD",
-        durationDays: 372
+        durationDays: 365
     },
 ];
 
-export const MembershipOffers: MembershipOffer[] = [
+export interface Offer {
+    name: string;
+    percentageOffer: number;
+    dateStart: Date;
+    dateEnd: Date;
+    enabled: boolean;
+}
+
+export const Offers: Offer[] = [
     {
         name: "Preventa fase 1 (Lanzamiento)",
         percentageOffer: 80,
@@ -263,3 +350,13 @@ export const MembershipOffers: MembershipOffer[] = [
         enabled: true
     },
 ];
+
+export const initialData: seedData = {
+    positions,
+    hierarchies: Hierarchys,
+    headquarters:Headquarters,
+    validationForm: ValidationForms,
+    statusValidation: StatusValidation,
+    memberships: Memberships,
+    membershipOffer: Offers
+}
