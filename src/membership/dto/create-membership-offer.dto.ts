@@ -9,7 +9,7 @@ export class CreateMembershipOfferDto {
 
     @IsNumber()
     @Type(() => Number)
-    percetageOffer: number;
+    percentageOffer: number;
 
     @IsDate()
     @Type(() => Date)
