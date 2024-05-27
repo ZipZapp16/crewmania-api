@@ -46,7 +46,7 @@ model User {
   firebaseToken  String?
   // * Relations
   userOccupancy  UserOccupancy?
-  userMembership UserMembership?
+  userMembership UserMembership[]
   userValidation UserValidation?
   // * End Relations
   createdAt      DateTime        @default(now())
@@ -127,52 +127,65 @@ model Headquarter {
 }
 
 model UserMembership {
-  id           String     @id @unique @default(uuid())
-  dateStart    DateTime   @default(now())
-  dateEnd      DateTime
-  renovation   Boolean
+  id                String   @id @unique @default(uuid())
+  dateStart         DateTime @default(now())
+  dateEnd           DateTime
+  renovation        Boolean
   // * Relations
-  membership   Membership @relation(fields: [membershipId], references: [id])
+  user              User?    @relation(fields: [userId], references: [id])
+  userId            String?
+  membershipOffer MembershipOffer @relation(fields: [membershipId], references: [id])
   membershipId String
-  user         User?      @relation(fields: [userId], references: [id])
-  userId       String?    @unique
   // * End Relations
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   @@map("userMemberships")
 }
 
 model Membership {
-  id                 String           @id @unique @default(uuid())
-  level              String
-  type               String
-  cost               Decimal
-  currency           String
-  durationDays       Int
+  id              String            @id @unique @default(uuid())
+  level           String
+  type            String
+  cost            Decimal
+  currency        String
+  durationDays    Int
   // * Relations
-  membershipOffers   MembershipOffer? @relation(fields: [membershipOffersId], references: [id])
-  membershipOffersId String?
-  userMembership     UserMembership[]
+  membershipOffer MembershipOffer[]
   // * End Relations
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
   @@map("memberships")
 }
 
-model MembershipOffer {
-  id             String       @id @unique @default(uuid())
-  name           String
-  percetageOffer Decimal
-  dateStart      DateTime?
-  dateEnd        DateTime?
-  enabled        Boolean
+model Offer {
+  id              String            @id @unique @default(uuid())
+  name            String
+  percentageOffer Decimal
+  dateStart       DateTime?
+  dateEnd         DateTime?
+  enabled         Boolean
   // * Relations
-  memberships    Membership[]
+  membershipOffer MembershipOffer[]
   // * End Relations
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@map("offers")
+}
+
+model MembershipOffer {
+  id           String     @id @unique @default(uuid())
+  // * Relations
+  membership   Membership @relation(fields: [membershipId], references: [id])
+  membershipId String
+  offer        Offer?     @relation(fields: [offerId], references: [id])
+  offerId      String
+  userMembership UserMembership[]
+  // * End Relations
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
   @@map("membershipOffers")
 }
@@ -195,15 +208,14 @@ model UserValidation {
 }
 
 model ValidationForm {
-  id                   String              @id @unique @default(uuid())
-  type                 String
-  description          String
+  id             String          @id @unique @default(uuid())
+  type           String
+  description    String
   // * Relations
-  userValidation       UserValidation?
-  validationFormDataId String?
+  userValidation UserValidation?
   // * End Relations
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@map("validationForms")
 }
