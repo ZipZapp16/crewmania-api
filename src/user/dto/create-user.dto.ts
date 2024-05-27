@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { Type } from "class-transformer";
 import { IsDate, IsEmail, IsOptional, IsString, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
 
@@ -46,4 +45,8 @@ export class CreateUserDto {
     @IsString()
     @IsOptional()
     firebaseToken?: string;
+
+    @IsString()
+    @MinLength(1)
+    role: string;
 }
