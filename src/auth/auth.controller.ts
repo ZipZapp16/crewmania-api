@@ -1,8 +1,12 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthUserDto } from './dto/auth-user.dto';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { AuthService } from './auth.service';
+
+import { AuthUserDto } from './dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
+
+import { UserResponse } from 'src/user/interfaces/user-response.interface';
+import { AuthResponse } from './interfaces';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -14,7 +18,7 @@ export class AuthController {
     description: 'Successfully logged.',
   })
   @Post('signin')
-  async auth(@Body() authUserDto: AuthUserDto) {
+  async auth(@Body() authUserDto: AuthUserDto): Promise<AuthResponse> {
     return this.authService.authUser(authUserDto);
   }
 
@@ -23,7 +27,7 @@ export class AuthController {
     description: 'The record has been successfully created.',
   })
   @Post('signup')
-  registerUser(@Body() createUserDto: CreateUserDto) {
+  registerUser(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
       return this.authService.registerUser(createUserDto);
   }
 }

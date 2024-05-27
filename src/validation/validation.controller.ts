@@ -1,54 +1,35 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ValidationService } from './validation.service';
 import { CreateValidationFormDto } from './dto/create-validation-form.dto';
-import { UpdateValidationDto } from './dto/update-validation-form.dto';
-import { StatusValidation, ValidationForm } from '@prisma/client';
 import { CreateStatusValidationDto } from './dto/create-status-validation.dto';
+import { ValidationResponse } from './interfaces/validation-response.interface';
+import { StatusValidationResponse } from './interfaces/status-validation-response.interface';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Validation')
 @Controller('validation')
 export class ValidationController {
   constructor(private readonly validationService: ValidationService) {}
 
-  //* Comienzan endpoints para validationForms
+  // * Comienzan endpoints para validationForms
   @Post('/forms')
-  createValidationForm(@Body() createValidationDto: CreateValidationFormDto): Promise<ValidationForm> {
+  createValidationForm(@Body() createValidationDto: CreateValidationFormDto): Promise<ValidationResponse> {
     return this.validationService.createValidationForm(createValidationDto);
   }
 
   @Get('/forms')
-  findAll(): Promise<ValidationForm[]> {
+  findAllValidationForms(): Promise<ValidationResponse> {
     return this.validationService.findAllValidationForms();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.validationService.findOne(+id);
-  // }
-
-  // @Post(':id')
-  // update(@Param('id') id: string, @Body() updateValidationDto: UpdateValidationDto) {
-  //   return this.validationService.update(+id, updateValidationDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.validationService.remove(+id);
-  // }
-
-  // * Comienzan endpoints para validationFormData
-  // @Post('/upload-image') 
-  // uploadUserImage() {
-
-  // }
-
   // * Comienzan endpoints para statusValidations
   @Post('/status')
-  createStatusValidation(@Body() createStatusValidationDto: CreateStatusValidationDto): Promise<StatusValidation> {
+  createStatusValidation(@Body() createStatusValidationDto: CreateStatusValidationDto): Promise<StatusValidationResponse> {
     return this.validationService.createStatusValidation(createStatusValidationDto);
   }
 
   @Get('/status')
-  findAllStatusValidation(): Promise<StatusValidation[]> {
+  findAllStatusValidation(): Promise<StatusValidationResponse> {
     return this.validationService.findAllStatusValidation();
   }
 }
