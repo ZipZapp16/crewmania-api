@@ -119,10 +119,10 @@ export class UserService {
     // * Comienzan endpoints para userMembership
     async createUserMembership(userMembershipDto: CreateUserMembershipDto): Promise<UserMembershipResponse> {
         try {
-            const { userId, membershipId } = userMembershipDto;
+            const { userId, membershipOfferId } = userMembershipDto;
 
             // * Obtiene la membresia elegida
-            const membership: MembershipResponse = await this.membershipService.findMembership(membershipId);
+            const membership: MembershipResponse = await this.membershipService.findMembership(membershipOfferId);
 
             // * Obtiene la fecha y hora actual y le suma la cantidad de dias de acuerdo a la membresia seleccionada.
             const dateStart: luxonTime.DateTime<true> = luxonTime.DateTime.now();
@@ -133,8 +133,8 @@ export class UserService {
                 dateStart: dateStart.toISO(),
                 dateEnd: dateEnd.toISO(),
                 renovation: false,
-                membership: membershipId ? { connect: { id: membershipId } } : undefined,
-                user: userId ? { connect: { id: userId } } : undefined
+                membershipOffer: membershipOfferId ? { connect: { id: membershipOfferId } } : undefined,
+                user: userId ? { connect: { id: userId } } : undefined,
             };
 
             // * Se crea y guardan los datos de la membresia seleccionada por el usuario.
