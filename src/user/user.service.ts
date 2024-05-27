@@ -6,7 +6,7 @@ import * as luxonTime from 'luxon';
 import { UserResponse } from './interfaces/user-response.interface';
 import { MembershipService } from 'src/membership/membership.service';
 import { UserValidationResponse } from './interfaces/user-validation-response.interface';
-import { CreateUserValidationDto } from './dto/create-user-validation';
+import { CreateUserValidationDto } from './dto/create-user-validation.dto';
 import { UserMembershipResponse } from './interfaces/user-membership-response.interface';
 import { CreateUserMembershipDto, CreateUserOccupancyDto } from './dto';
 import { MembershipResponse } from 'src/membership/interfaces';
