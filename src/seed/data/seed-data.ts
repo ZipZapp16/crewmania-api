@@ -322,8 +322,8 @@ export const Memberships: Membership[] = [
 export interface Offer {
     name: string;
     percentageOffer: number;
-    dateStart: Date;
-    dateEnd: Date;
+    startDate: Date;
+    endDate: Date;
     enabled: boolean;
 }
 
@@ -331,22 +331,22 @@ export const Offers: Offer[] = [
     {
         name: "Preventa fase 1 (Lanzamiento)",
         percentageOffer: 80,
-        dateStart: new Date('2024-08-10'),
-        dateEnd: new Date('2024-10-17'),
+        startDate: new Date('2024-08-10'),
+        endDate: new Date('2024-10-17'),
         enabled: true
     },
     {
         name: "Preventa fase 2",
         percentageOffer: 65,
-        dateStart: new Date('2024-10-18'),
-        dateEnd: new Date('2025-01-25'),
+        startDate: new Date('2024-10-18'),
+        endDate: new Date('2025-01-25'),
         enabled: true
     },
     {
         name: "Preventa fase 3",
         percentageOffer: 50,
-        dateStart: new Date('2025-01-26'),
-        dateEnd: new Date('2025-05-25'),
+        startDate: new Date('2025-01-26'),
+        endDate: new Date('2025-05-25'),
         enabled: true
     },
 ];

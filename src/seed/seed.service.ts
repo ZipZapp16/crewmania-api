@@ -67,15 +67,15 @@ export class SeedService {
     let positionHierarhies = [];
 
       positions.map(({ id: positionId, name: positionName }) => {
-        hierarchies.map(({ id: herarchyId, name: hierarchyName }) => {
+        hierarchies.map(({ id: hierarchyId, name: hierarchyName }) => {
           if (positionName === 'Piloto') {
             if (hierarchyName === 'Cap.' || hierarchyName === 'P.O.') {
-              positionHierarhies.push(this.occupancyService.createPositionHierarchy({ positionId, herarchyId }))
+              positionHierarhies.push(this.occupancyService.createPositionHierarchy({ positionId, hierarchyId }))
             }
           } 
           else {
             if (hierarchyName === 'ESB' || hierarchyName === 'SOB') {
-              positionHierarhies.push(this.occupancyService.createPositionHierarchy({ positionId, herarchyId }))
+              positionHierarhies.push(this.occupancyService.createPositionHierarchy({ positionId, hierarchyId }))
             }
           }
         });
