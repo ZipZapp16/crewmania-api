@@ -5,7 +5,7 @@ import { Membership, MembershipOffer, Prisma } from '@prisma/client';
 import { CreateMembershipOfferDto } from './dto/create-membership-offer.dto';
 import { MembershipOfferResponse, MembershipResponse } from './interfaces';
 import { CreateOfferDto } from './dto';
-import { OfferResponse } from './interfaces/offer-response.interface';
+import { OfferResponse } from './interfaces/offers-response.interface';
 import { FindMembershipOfferResponse } from './interfaces/membership-offer-response.interface';
 
 @Injectable()
