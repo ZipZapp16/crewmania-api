@@ -101,12 +101,12 @@ export class OccupancyService {
   async createPositionHierarchy(createPositionHierarchyDto: CreatePositionHierarchyDto): Promise<PositionHierarchyResponse> {
     try {
 
-      const { herarchyId, positionId, ...restOfData } = createPositionHierarchyDto;
+      const { hierarchyId, positionId, ...restOfData } = createPositionHierarchyDto;
 
       const data: Prisma.PositionsHerarchyCreateInput = {
         ...restOfData,
         position: positionId ? { connect: { id: positionId } } : undefined,
-        hierarchy: herarchyId ? { connect: { id: herarchyId } } : undefined,
+        hierarchy: hierarchyId ? { connect: { id: hierarchyId } } : undefined,
       };
 
       const newPosHier = await this.prismaService.positionsHerarchy.create({ data });
