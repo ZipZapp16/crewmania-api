@@ -164,8 +164,8 @@ model Offer {
   id              String            @id @unique @default(uuid())
   name            String
   percentageOffer Decimal
-  dateStart       DateTime?
-  dateEnd         DateTime?
+  startDate       DateTime?
+  endDate         DateTime?
   enabled         Boolean
   // * Relations
   membershipOffer MembershipOffer[]
