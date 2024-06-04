@@ -26,7 +26,7 @@ async function main() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("crewmania-docs", app, document);
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 8000);
   logger.log(`App running on port ${process.env.PORT}`)
 }
 main();
