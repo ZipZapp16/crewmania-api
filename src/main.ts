@@ -1,11 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function main() {
   const app = await NestFactory.create(AppModule);
 
+  const logger = new Logger('main');
   app.setGlobalPrefix('api/v1');
 
   app.useGlobalPipes(
@@ -25,6 +26,7 @@ async function main() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("crewmania-docs", app, document);
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
+  logger.log(`App running on port ${process.env.PORT}`)
 }
 main();
