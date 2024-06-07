@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OccupancyService } from "./occupancy.service";
-import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto } from "./dto";
+import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdatePositionDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
 
 @ApiTags('Occupancy')
@@ -14,10 +14,28 @@ export class OccupancyController {
   createPosition(@Body() createPositionDto: CreatePositionDto): Promise<PositionResponse> {
     return this.occupancyService.createPosition(createPositionDto);
   }
+  
+  @Get('/position/:positionId')
+  findPosition(@Param('positionId', ParseUUIDPipe) positionId: string): Promise<PositionResponse> {
+    return this.occupancyService.findPosition(positionId);
+  }
 
   @Get('/positions')
   findAllPositions(): Promise<PositionResponse> {
     return this.occupancyService.findAllPositions();
+  }
+
+  @Patch('/position/:positionId')
+  updatePosition(
+    @Param('positionId', ParseUUIDPipe) positionId: string, 
+    @Body() updatePositionDto: UpdatePositionDto
+  ): Promise<PositionResponse> {
+    return this.occupancyService.updatePosition(positionId, updatePositionDto);
+  }
+
+  @Delete('/position/:positionId')
+  deletePosition(@Param('positionId', ParseUUIDPipe) positionId: string): Promise<PositionResponse> {
+    return this.occupancyService.deletePosition(positionId);
   }
 
   // * Comienzan endpoitns para hierarchys
@@ -34,7 +52,7 @@ export class OccupancyController {
   // * Comienzan endpoints para headquartes
   @Post('/headquartes')
   creatHeadquarter(@Body() createHeadquarterDto: CreateHeadquarterDto): Promise<HeadquarterResponse> {
-    return this.occupancyService.creatHeadquarter(createHeadquarterDto);
+    return this.occupancyService.createHeadquarter(createHeadquarterDto);
   }
 
   @Get('/headquartes')

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto } from "./dto";
+import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdatePositionDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
 
 @Injectable()
@@ -23,6 +23,20 @@ export class OccupancyService {
     }
   }
 
+  async findPosition(positionId: string): Promise<PositionResponse> {
+    try {
+      const position = await this.prismaService.position.findUnique({ where: { id: positionId }});
+
+      return {
+        status: "ok",
+        message: "success",
+        data: position
+      };
+    } catch (error) {
+      throw new NotFoundException(`The position with id: ${positionId} doesn't exist`);
+    }
+  }
+
   async findAllPositions(): Promise<PositionResponse> {
     try {
       const positions = await this.prismaService.position.findMany();
@@ -34,7 +48,40 @@ export class OccupancyService {
       };
     } catch (error) {
       console.log(error)
-      throw new NotFoundException("No se encontraron roles disponibles.");
+      throw new NotFoundException(`Doesn't exists positions.`);
+    }
+  }
+
+  async updatePosition(positionId: string, updatePositionDto: UpdatePositionDto): Promise<PositionResponse> {
+    const { name } = updatePositionDto;
+    const { data } = await this.findPosition(positionId);
+
+    try {
+      const positionUpdated = await this.prismaService.position.update({ data: { name }, where: { id: data['id'] } });
+
+      return {
+        status: 'ok',
+        message: 'success',
+        data: positionUpdated
+      }
+    } catch (error) {
+      throw new BadRequestException(`Error to update position with id ${positionId}`);
+    }
+  }
+
+  async deletePosition(positionId: string): Promise<PositionResponse> {
+    try {
+      const position = await this.findPosition(positionId);
+
+      const positionDeleted = await this.prismaService.position.delete({ where: { id: position.data['id'] }});
+
+      return {
+        status: 'ok',
+        message: 'success',
+        data: positionDeleted
+      }
+    } catch (error) {
+      throw new BadRequestException(`Error to delete position with id ${positionId}.`);
     }
   }
 
@@ -68,7 +115,7 @@ export class OccupancyService {
     }
   }
 
-  async creatHeadquarter(createHeadquarterDto: CreateHeadquarterDto): Promise<HeadquarterResponse> {
+  async createHeadquarter(createHeadquarterDto: CreateHeadquarterDto): Promise<HeadquarterResponse> {
     try {
       const newHeadquarter = await this.prismaService.headquarter.create({ data: createHeadquarterDto });
 
