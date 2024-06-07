@@ -17,6 +17,7 @@ export class SeedService {
 
     await this.insertPositions();
     await this.insertHierarchies();
+    await this.insertHeadquarter();
     await this.insertPositionHierarchies();
 
     await this.insertValidationForms();
@@ -82,6 +83,20 @@ export class SeedService {
       });
 
     await Promise.all(positionHierarhies);
+
+    return true
+  }
+
+  private async insertHeadquarter() {
+    const seedHeadquarter = initialData.headquarters;
+
+    let headquarters = [];
+
+    seedHeadquarter.forEach(headquarter => {
+      headquarters.push(this.occupancyService.createHeadquarter(headquarter));
+    });
+
+    await Promise.all(headquarters);
 
     return true
   }
