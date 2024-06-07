@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OccupancyService } from "./occupancy.service";
-import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdatePositionDto } from "./dto";
+import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdateHeadquarterDto, UpdatePositionDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
 import { UpdateHierarchyDto } from './dto/update-hierarchy.dto';
 
@@ -71,14 +71,32 @@ export class OccupancyController {
   }
 
   // * Comienzan endpoints para headquartes
-  @Post('/headquartes')
+  @Post('/headquarters')
   creatHeadquarter(@Body() createHeadquarterDto: CreateHeadquarterDto): Promise<HeadquarterResponse> {
     return this.occupancyService.createHeadquarter(createHeadquarterDto);
   }
 
-  @Get('/headquartes')
+  @Get('/headquarter/:headquarterId')
+  findHeadquarter(@Param('headquarterId', ParseUUIDPipe) headquarterId: string): Promise<HeadquarterResponse> {
+    return this.occupancyService.findHeadquarter(headquarterId);
+  }
+
+  @Get('/headquarters')
   findAllHeadquarters(): Promise<HeadquarterResponse> {
     return this.occupancyService.findAllHeadquarters();
+  }
+
+  @Patch('/headquarter/:headquarterId')
+  updateHeadquarter(
+    @Param('headquarterId', ParseUUIDPipe) headquarterId: string,
+    @Body() updateHeadquarterDto: UpdateHeadquarterDto
+  ): Promise<HeadquarterResponse> {
+    return this.occupancyService.updateHeadquarter(headquarterId, updateHeadquarterDto);
+  }
+
+  @Delete('/headquarter/:headquarterId')
+  deleteHeadquarter(@Param('headquarterId', ParseUUIDPipe) headquarterId: string): Promise<HeadquarterResponse> {
+    return this.occupancyService.deleteHeadquarter(headquarterId);
   }
 
   // * Comienzan endpoints para positionHerarchys

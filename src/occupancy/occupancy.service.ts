@@ -4,6 +4,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdatePositionDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
 import { UpdateHierarchyDto } from './dto/update-hierarchy.dto';
+import { UpdateHeadquarterDto } from './dto/update-headquarter.dto';
 
 @Injectable()
 export class OccupancyService {
@@ -26,7 +27,7 @@ export class OccupancyService {
 
   async findPosition(positionId: string): Promise<PositionResponse> {
     try {
-      const position = await this.prismaService.position.findUnique({ where: { id: positionId }});
+      const position = await this.prismaService.position.findUnique({ where: { id: positionId } });
 
       return {
         status: "ok",
@@ -74,7 +75,7 @@ export class OccupancyService {
     try {
       const position = await this.findPosition(positionId);
 
-      const positionDeleted = await this.prismaService.position.delete({ where: { id: position.data['id'] }});
+      const positionDeleted = await this.prismaService.position.delete({ where: { id: position.data['id'] } });
 
       return {
         status: 'ok',
@@ -103,7 +104,7 @@ export class OccupancyService {
 
   async findHierarchy(hierarchyId: string): Promise<HierarchyResponse> {
     try {
-      const hierarchy = await this.prismaService.hierarchy.findUnique({ where: { id: hierarchyId }});
+      const hierarchy = await this.prismaService.hierarchy.findUnique({ where: { id: hierarchyId } });
 
       return {
         status: "ok",
@@ -151,7 +152,7 @@ export class OccupancyService {
     try {
       const { data: hierarchy } = await this.findHierarchy(hierarchyId);
 
-      const hierarchyDeleted = await this.prismaService.hierarchy.delete({ where: { id: hierarchy['id'] }});
+      const hierarchyDeleted = await this.prismaService.hierarchy.delete({ where: { id: hierarchy['id'] } });
 
       return {
         status: "ok",
@@ -190,6 +191,52 @@ export class OccupancyService {
     } catch (error) {
       console.log(error)
       throw new NotFoundException("No se encontraron jerarquias disponibles.");
+    }
+  }
+
+  async findHeadquarter(headquarterId: string): Promise<HeadquarterResponse> {
+    try {
+      const headquarter = await this.prismaService.headquarter.findUnique({ where: { id: headquarterId } });
+
+      return {
+        status: "ok",
+        message: "success",
+        data: headquarter
+      }
+    } catch (error) {
+      throw new NotFoundException(`Headquarter with id ${headquarterId} doesn't exist. `)
+    }
+  }
+
+  async updateHeadquarter(headquarterId: string, updateHeadquarterDto: UpdateHeadquarterDto): Promise<HeadquarterResponse> {
+    try {
+      const { data: headquarter } = await this.findHeadquarter(headquarterId);
+
+      const headquarterToUpdate = await this.prismaService.headquarter.update({ where: { id: headquarter['id'] }, data: updateHeadquarterDto });
+
+      return {
+        status: "ok",
+        message: "success",
+        data: headquarterToUpdate
+      }
+    } catch (error) {
+      throw new BadRequestException(`Error to update the headquarter with id ${headquarterId}. ${error}`);
+    }
+  }
+
+  async deleteHeadquarter(headquarterId: string): Promise<HeadquarterResponse> {
+    try {
+      const headquarter = this.findHeadquarter(headquarterId);
+
+      const headquarterToDelete = await this.prismaService.headquarter.delete({ where: { id: headquarter['id'] } });
+
+      return {
+        status: "ok",
+        message: "success",
+        data: headquarterToDelete
+      }
+    } catch (error) {
+      throw new BadRequestException(`Error to delete the headquarter with id ${headquarterId}.`);
     }
   }
 
