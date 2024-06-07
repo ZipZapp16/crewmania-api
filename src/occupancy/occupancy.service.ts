@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdatePositionDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
+import { UpdateHierarchyDto } from './dto/update-hierarchy.dto';
 
 @Injectable()
 export class OccupancyService {
@@ -100,6 +101,20 @@ export class OccupancyService {
     }
   }
 
+  async findHierarchy(hierarchyId: string): Promise<HierarchyResponse> {
+    try {
+      const hierarchy = await this.prismaService.hierarchy.findUnique({ where: { id: hierarchyId }});
+
+      return {
+        status: "ok",
+        message: "success",
+        data: hierarchy
+      }
+    } catch (error) {
+      throw new NotFoundException(`Hierarchy with id ${hierarchyId} doesn't exist.`);
+    }
+  }
+
   async findAllHierarchys(): Promise<HierarchyResponse> {
     try {
       const hierarchys = await this.prismaService.hierarchy.findMany();
@@ -112,6 +127,39 @@ export class OccupancyService {
     } catch (error) {
       console.log(error)
       throw new NotFoundException("No se encontraron jerarquias disponibles.");
+    }
+  }
+
+  async updateHierarchy(hierarchyId: string, updateHierarchyDto: UpdateHierarchyDto): Promise<HierarchyResponse> {
+    try {
+      const { data: hierarchy } = await this.findHierarchy(hierarchyId);
+      const { name } = updateHierarchyDto;
+
+      const hierarchyUpdate = await this.prismaService.hierarchy.update({ where: { id: hierarchy['id'] }, data: { name } });
+
+      return {
+        status: "ok",
+        message: "success",
+        data: hierarchyUpdate
+      }
+    } catch (error) {
+      throw new BadRequestException(`Error to update hierarchy with id ${hierarchyId}. ${error}`);
+    }
+  }
+
+  async deleteHierarchy(hierarchyId: string): Promise<HierarchyResponse> {
+    try {
+      const { data: hierarchy } = await this.findHierarchy(hierarchyId);
+
+      const hierarchyDeleted = await this.prismaService.hierarchy.delete({ where: { id: hierarchy['id'] }});
+
+      return {
+        status: "ok",
+        message: "success",
+        data: hierarchyDeleted
+      }
+    } catch (error) {
+      throw new BadRequestException(`Error to delete hierarchy with id ${hierarchyId}. ${error}`);
     }
   }
 

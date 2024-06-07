@@ -3,6 +3,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { OccupancyService } from "./occupancy.service";
 import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdatePositionDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
+import { UpdateHierarchyDto } from './dto/update-hierarchy.dto';
 
 @ApiTags('Occupancy')
 @Controller('occupancy')
@@ -44,9 +45,29 @@ export class OccupancyController {
     return this.occupancyService.createHierarchys(createHierarchyDto);
   }
 
+  @Get('/hierarchy/:hierarchyId')
+  findHierarchy(@Param('hierarchyId', ParseUUIDPipe) hierarchyId: string): Promise<HierarchyResponse> {
+    return this.occupancyService.findHierarchy(hierarchyId);
+  }
+
   @Get('/hierarchys')
   findAllHierarchys(): Promise<HierarchyResponse> {
     return this.occupancyService.findAllHierarchys();
+  }
+
+  @Patch('/hierarchy/:hierarchyId')
+  updateHierarchy(
+    @Param('hierarchyId', ParseUUIDPipe) hierarchyId: string,
+    @Body() updateHierarchyDto: UpdateHierarchyDto
+  ): Promise<HierarchyResponse> {
+    return this.occupancyService.updateHierarchy(hierarchyId, updateHierarchyDto);
+  }
+
+  @Delete('/hierarchy/:hierarchyId')
+  deleteHierarchy(
+    @Param('hierarchyId', ParseUUIDPipe) hierarchyId: string
+  ): Promise<HierarchyResponse> {
+    return this.occupancyService.deleteHierarchy(hierarchyId);
   }
 
   // * Comienzan endpoints para headquartes
