@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OccupancyService } from "./occupancy.service";
-import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdateHeadquarterDto, UpdatePositionDto } from "./dto";
+import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdateHeadquarterDto, UpdatePositionDto, UpdatePositionHierarchyDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
 import { UpdateHierarchyDto } from './dto/update-hierarchy.dto';
 
@@ -105,8 +105,31 @@ export class OccupancyController {
     return this.occupancyService.createPositionHierarchy(createPositionHierarchyDto);
   }
 
-  @Get('/positionHerarchys')
-  findAllPositionsHerarchys(): Promise<PositionHierarchyResponse> {
+  @Get('/positionHerarchys/:positionHerarchyId')
+  findPositionHerarchy(@Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string) {
+    this.occupancyService.findPositionHerarchy(positionHerarchyId);
+  }
+  
+  @Get('/positionHerarchys/position/:positionId')
+  findHierarchiesWithPositionId(@Param('positionId', ParseUUIDPipe) positionId: string) {
+    return this.occupancyService.findHierarchiesWithPositionId(positionId);
+  }
+
+  @Get('/positionHerarchies')
+  findAllPositionsHerarchies(): Promise<PositionHierarchyResponse> {
     return this.occupancyService.findAllPositionHerarchys();
+  }
+
+  @Patch('/positionHerarchys/:positionHerarchyId')
+  updatePositionHierarchy(
+    @Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string,
+    @Body() updatePositionHierarchyDto: UpdatePositionHierarchyDto
+  ) {
+    return this.occupancyService.updatePositionHierarchy(positionHerarchyId, updatePositionHierarchyDto);
+  }
+
+  @Delete('/positionHerarchys/:positionHerarchyId')
+  deletePositionHierarchy(@Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string) {
+    return this.occupancyService.deletePositionHierarchy(positionHerarchyId);
   }
 }

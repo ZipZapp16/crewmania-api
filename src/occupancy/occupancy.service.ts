@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { Hierarchy, Prisma } from "@prisma/client";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdatePositionDto } from "./dto";
+import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdatePositionDto, UpdatePositionHierarchyDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
 import { UpdateHierarchyDto } from './dto/update-hierarchy.dto';
 import { UpdateHeadquarterDto } from './dto/update-headquarter.dto';
@@ -264,6 +264,52 @@ export class OccupancyService {
     }
   }
 
+  async findPositionHerarchy(positionHerarchyId: string): Promise<PositionHierarchyResponse> {
+    try {
+      const positionHerarchy = await this.prismaService.positionsHerarchy.findUnique({ where: { id: positionHerarchyId }});
+
+      return {
+        message: 'success',
+        status: 'ok',
+        data: positionHerarchy
+      }
+    } catch (error) {
+      throw new NotFoundException(`PositionHerarchy with id ${positionHerarchyId} doesn't exist`);
+    }
+  }
+
+  async findHierarchiesWithPositionId(positionId: string): Promise<HierarchyResponse> {
+    try {
+      const { data: position } = await this.findPosition(positionId);
+      const hierarchies = await this.prismaService.positionsHerarchy.findMany({ where: { positionId: position['id'] } });
+
+      let hierarchisData = hierarchies.map(async ({ hierarchyId }) => {
+        const { data } = await this.findHierarchy(hierarchyId);
+
+        return data;
+      })
+ 
+      let data = await Promise.all(hierarchisData);
+
+      let response: Hierarchy[] = data.reduce<Hierarchy[]>((acc, item) => {
+        if (Array.isArray(item)) {
+          return acc.concat(item);
+        } else {
+          acc.push(item);
+          return acc;
+        }
+      }, []);
+
+      return {
+        message: 'success',
+        status: 'ok',
+        data: response
+      }
+    } catch (error) {
+      throw new NotFoundException(`There aren't hierarchies related with positionId ${positionId}`);
+    }
+  }
+
   async findAllPositionHerarchys(): Promise<PositionHierarchyResponse> {
     try {
       const posHerar = await this.prismaService.positionsHerarchy.findMany();
@@ -276,6 +322,46 @@ export class OccupancyService {
     } catch (error) {
       console.log(error)
       throw new NotFoundException("No se encontraron jerarquias disponibles.");
+    }
+  }
+
+  async updatePositionHierarchy(positionHerarchyId: string, updatePositionHierarchyDto: UpdatePositionHierarchyDto): Promise<PositionHierarchyResponse> {
+    try {
+      const { data: positionHierarchy } = await this.findPositionHerarchy(positionHerarchyId);
+
+      const { positionId, hierarchyId, ...restOfData } = updatePositionHierarchyDto;
+
+      const data: Prisma.PositionsHerarchyCreateInput = {
+        ...restOfData,
+        position: positionId ? { connect: { id: positionId } } : undefined,
+        hierarchy: hierarchyId ? { connect: { id: hierarchyId } } : undefined,
+      };
+
+      const positionHierarchyUpdated = await this.prismaService.positionsHerarchy.update({ where: { id: positionHierarchy['id'] }, data });
+
+      return {
+        status: "ok",
+        message: "success",
+        data: positionHierarchyUpdated
+      }
+    } catch (error) {
+      throw new BadRequestException(`Error to update PositionHierarchy with id ${positionHerarchyId}.`);
+    }
+  }
+
+  async deletePositionHierarchy(positionHerarchyId: string): Promise<PositionHierarchyResponse>  {
+    try {
+      const { data: positionHierarchy } = await this.findPositionHerarchy(positionHerarchyId);
+
+      const positionHierarchyToDelete = await this.prismaService.positionsHerarchy.delete({ where: { id: positionHierarchy['id'] }});
+
+      return { 
+        status: "ok",
+        message: "success",
+        data: positionHierarchyToDelete
+      }
+    } catch (error) {
+      throw new BadRequestException(`Error to update PositionHierarchy with id ${positionHerarchyId}.`);
     }
   }
 }
