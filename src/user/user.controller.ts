@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { UserService } from "./user.service";
 import { UserResponse, UserValidationResponse } from "./interfaces";
-import { CreateUserMembershipDto, CreateUserOccupancyDto, CreateUserValidationDto } from "./dto";
+import { CreateUserMembershipDto, CreateUserOccupancyDto, CreateUserValidationDto, UpdateUserDto } from "./dto";
 import { UserOccupancyResponse } from "./interfaces/user-occupancy-response.interface";
 import { UserMembershipResponse } from "./interfaces/user-membership-response.interface";
 import { UpdateUserOccupancyDto } from './dto/update-user-occupancy.dto';
@@ -22,9 +22,22 @@ export class UserController {
         return this.userService.findAllUsers();
     }
 
-    @Get('user/:id')
-    findUser(@Param('id', ParseUUIDPipe) id: string) {
-        return this.userService.findUser(id);
+    @Get('/:userId')
+    findUser(@Param('userId', ParseUUIDPipe) userId: string) {
+        return this.userService.findUser(userId);
+    }
+
+    @Patch('/:userId')
+    updateUser(
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @Body() updateUserDto: UpdateUserDto
+    ): Promise<UserResponse> {
+        return this.userService.updateUser(userId, updateUserDto);
+    }
+
+    @Delete('/:userId')
+    deleteUser(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserResponse> {
+        return this.userService.deleteUser(userId);
     }
 
     // * Comienzan endpoints para userOccupancy
