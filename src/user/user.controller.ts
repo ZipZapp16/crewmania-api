@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { UserService } from "./user.service";
 import { UserResponse, UserValidationResponse } from "./interfaces";
 import { CreateUserMembershipDto, CreateUserOccupancyDto, CreateUserValidationDto } from "./dto";
 import { UserOccupancyResponse } from "./interfaces/user-occupancy-response.interface";
 import { UserMembershipResponse } from "./interfaces/user-membership-response.interface";
+import { UpdateUserOccupancyDto } from './dto/update-user-occupancy.dto';
 
 
 @ApiTags('Users')
@@ -32,9 +33,32 @@ export class UserController {
         return this.userService.createUserOccupancy(userOccupancyDto);
     }
 
+    @Get('/userOccupancy/:userOccupancyId')
+    findUserOccupancy(@Param('userOccupancyId', ParseUUIDPipe) userOccupancyId: string): Promise<UserOccupancyResponse> {
+        return this.userService.findUserOccupancy(userOccupancyId);
+    }
+
+    @Get('/:userId/userOccupancy')
+    findUserOccupancyByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupancyResponse> {
+        return this.userService.findUserOccupancyByUserId(userId);
+    }
+
     @Get('/userOccupancy')
     findAllUserOccupancy(): Promise<UserOccupancyResponse> {
         return this.userService.findAllUserOccupancy();
+    }
+
+    @Patch('/:userId/userOccupancy')
+    updateUserOccupancy(
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @Body() updateUserOccupancyDto: UpdateUserOccupancyDto
+    ): Promise<UserOccupancyResponse> {
+        return this.userService.updateUserOccupancy(userId, updateUserOccupancyDto);
+    }
+
+    @Delete('/:userId/userOccupancy')
+    deleteUserOccupancy(@Param('userId', ParseUUIDPipe) userId: string,): Promise<UserOccupancyResponse> {
+        return this.userService.deleteUserOccupancy(userId);
     }
 
     // * Comienzan endpoints para userMembership

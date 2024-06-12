@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Membership, Prisma, UserMembership } from '@prisma/client';
+import { Membership, Prisma, UserMembership, UserOccupancy } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import * as luxonTime from 'luxon';
@@ -11,6 +11,7 @@ import { UserMembershipResponse } from './interfaces/user-membership-response.in
 import { CreateUserMembershipDto, CreateUserOccupancyDto } from './dto';
 import { MembershipResponse } from 'src/membership/interfaces';
 import { UserOccupancyResponse } from './interfaces/user-occupancy-response.interface';
+import { UpdateUserOccupancyDto } from './dto/update-user-occupancy.dto';
 
 @Injectable()
 export class UserService {
@@ -19,7 +20,7 @@ export class UserService {
         private readonly membershipService: MembershipService
     ) { }
 
-    async deleteUser(id: string) {
+    async deleteUser(id: string): Promise<UserResponse> {
         const isExistUser = await this.prismaService.user.findUnique({
             where: {
                 id
@@ -36,13 +37,11 @@ export class UserService {
             },
         });
 
-        return [
-            {
-                status: "ok",
-                message: "success",
-                data: user
-            }
-        ];
+        return {
+            status: "ok",
+            message: "success",
+            data: user
+        };
     }
 
     async findAllUsers(): Promise<UserResponse> {
@@ -102,6 +101,35 @@ export class UserService {
         }
     }
 
+    async findUserOccupancy(userOccupancyId: string): Promise<UserOccupancyResponse> {
+        try {
+            const userOccupancy = await this.prismaService.userOccupancy.findUnique({ where: { id: userOccupancyId } });
+
+            return {
+                status: "ok",
+                message: "success",
+                data: userOccupancy
+            }
+        } catch (error) {
+            throw new NotFoundException(`UserOccupancy with id ${userOccupancyId} doesn't exists.`);
+        }
+    }
+
+    async findUserOccupancyByUserId(userId: string): Promise<UserOccupancyResponse> {
+        try {
+            const { data: user } = await this.findUser(userId);
+            const userOccupancy = await this.prismaService.userOccupancy.findUnique({ where: { userId: user['id'] } });
+
+            return {
+                status: "ok",
+                message: "success",
+                data: userOccupancy
+            }
+        } catch (error) {
+            throw new NotFoundException(`UserOccupancy with id ${userId} doesn't exists.`);
+        }
+    }
+
     async findAllUserOccupancy(): Promise<UserOccupancyResponse> {
         try {
             const usersOccupancy = await this.prismaService.userOccupancy.findMany();
@@ -113,6 +141,45 @@ export class UserService {
         } catch (error) {
             console.log(error)
             throw new NotFoundException(`No se encontraron datos del usuario. ${error}`);
+        }
+    }
+
+    async updateUserOccupancy(idUser: string, updateUserOccupancyDto: UpdateUserOccupancyDto): Promise<UserOccupancyResponse> {
+        try {
+            const { data: userOccupancyToUpdate } = await this.findUserOccupancyByUserId(idUser);
+            const { headquarterId, positionHerarchyId, userId } = updateUserOccupancyDto;
+
+            const data: Prisma.UserOccupancyUpdateInput = {
+                headquarter: headquarterId ? { connect: { id: headquarterId } } : undefined,
+                positionsHerarchy: positionHerarchyId ? { connect: { id: positionHerarchyId } } : undefined,
+                user: userId ? { connect: { id: userId } } : undefined
+              };
+
+            const userOccupancyUpdated = await this.prismaService.userOccupancy.update({ where: { id: userOccupancyToUpdate['id'] }, data });
+
+            return {
+                status: "ok",
+                message: 'success',
+                data: userOccupancyUpdated
+            }
+        } catch (error) {
+            throw new BadRequestException(`Error to update the information of userOccupancy with id ${idUser} ${error}`);
+        }
+    }
+
+    async deleteUserOccupancy(userId: string): Promise<UserOccupancyResponse> {
+        try {
+            const { data: userOccupancyToDelete} = await this.findUserOccupancyByUserId(userId);
+
+            const userOccupancyDeleted = await this.prismaService.userOccupancy.delete({ where: { id: userOccupancyToDelete['id'] }});
+
+            return {
+                status: 'ok',
+                message: 'success',
+                data: userOccupancyDeleted
+            }
+        } catch (error) {
+            throw new BadRequestException(`Error to delete the information of userOccupancy with id ${userId} ${error}`);
         }
     }
 
