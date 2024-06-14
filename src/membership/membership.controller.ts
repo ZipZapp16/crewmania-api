@@ -4,7 +4,7 @@ import { CreateMembershipDto } from './dto/create-membership.dto';
 import { CreateMembershipOfferDto } from './dto/create-membership-offer.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { MembershipOfferResponse, MembershipResponse, OfferResponse } from './interfaces';
-import { CreateOfferDto } from './dto';
+import { CreateOfferDto, UpdateMembershipDto } from './dto';
 import { FindMembershipOfferResponse } from './interfaces/membership-offer-response.interface';
 
 @ApiTags('Membership')
@@ -22,9 +22,22 @@ export class MembershipController {
     return this.membershipService.findAllMembership();
   }
 
-  @Get(':id')
-  findMembership(@Param('id', ParseUUIDPipe) id: string): Promise<MembershipResponse> {
-    return this.membershipService.findMembership(id);
+  @Get('/:membershipId')
+  findMembership(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<MembershipResponse> {
+    return this.membershipService.findMembership(membershipId);
+  }
+
+  @Patch('/:membershipId')
+  updateMembership(
+    @Param('membershipId', ParseUUIDPipe) membershipId: string,
+    @Body() updateMembershipDto: UpdateMembershipDto
+  ): Promise<MembershipResponse> {
+    return this.membershipService.updateMembership(membershipId, updateMembershipDto);
+  }
+
+  @Delete('/:membershipId')
+  deleteMembership(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<MembershipResponse> {
+    return this.membershipService.deleteMembership(membershipId);
   }
 
   // * Comienzan endpoints para offers

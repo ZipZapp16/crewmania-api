@@ -7,6 +7,7 @@ import { MembershipOfferResponse, MembershipResponse } from './interfaces';
 import { CreateOfferDto } from './dto';
 import { OfferResponse } from './interfaces/offers-response.interface';
 import { FindMembershipOfferResponse } from './interfaces/membership-offer-response.interface';
+import { UpdateMembershipDto } from './dto/update-membership.dto';
 
 @Injectable()
 export class MembershipService {
@@ -14,7 +15,6 @@ export class MembershipService {
   constructor(private readonly prismaService: PrismaService) { }
 
   async createMembership(createMembershipDto: CreateMembershipDto): Promise<MembershipResponse> {
-
     try {
       const membership = await this.prismaService.membership.create({ data: createMembershipDto });
 
@@ -24,8 +24,21 @@ export class MembershipService {
         data: membership
       };
     } catch (error) {
-      console.log(error)
-      throw new BadRequestException(`Error al crear membresia. ${error}`);
+      throw new BadRequestException(`Error to create membership. ${error}`);
+    }
+  }
+
+  async findMembership(membershipId: string): Promise<MembershipResponse> {
+    try {
+      const membership = await this.prismaService.membership.findUnique({ where: { id: membershipId } });
+
+      return {
+        status: 'ok',
+        message: 'success',
+        data: membership
+      };
+    } catch (error) {
+      throw new NotFoundException(`Membership with id ${membershipId} doesn't exists.`);
     }
   }
 
@@ -39,21 +52,39 @@ export class MembershipService {
         data: memberships
       };
     } catch (error) {
-      throw new NotFoundException('No se encontratron membresias.');
+      throw new NotFoundException('There are not memberships registered.');
     }
   }
 
-  async findMembership(id: string): Promise<MembershipResponse> {
+  async updateMembership(membershipId: string, updateMembershipDto: UpdateMembershipDto): Promise<MembershipResponse> {
     try {
-      const membership = await this.prismaService.membership.findUnique({ where: { id } });
+      const { data: membershipToUpdate } = await this.findMembership(membershipId);
+
+      const membershipUpdated = await this.prismaService.membership.update({ where: { id: membershipToUpdate['id'] }, data: updateMembershipDto });
 
       return {
-        status: 'ok',
-        message: 'success',
-        data: membership
-      };
+        status: "ok",
+        message: "success",
+        data: membershipUpdated
+      }
     } catch (error) {
-      throw new NotFoundException('No se encontratron membresias.');
+      throw new BadRequestException(`Error to update membership with id ${membershipId}. ${error}`);
+    }
+  }
+
+  async deleteMembership(membershipId: string): Promise<MembershipResponse> {
+    try {
+      const { data: membershipToDelete } = await this.findMembership(membershipId);
+
+      const membershipDeleted = await this.prismaService.membership.delete({ where: { id: membershipToDelete['id'] } })
+
+      return {
+        status: "ok",
+        message: "success",
+        data: membershipDeleted
+      }
+    } catch (error) {
+      throw new BadRequestException(`Error to delete the membership with id ${membershipId}. ${error}`);
     }
   }
 
@@ -84,7 +115,6 @@ export class MembershipService {
         data: offers
       };
     } catch (error) {
-      console.log(error)
       throw new NotFoundException('No hay ofertas registradas.');
     }
   }
@@ -120,7 +150,6 @@ export class MembershipService {
         data: membershipOffer
       }
     } catch (error) {
-      console.log(error)
       throw new BadRequestException("Can't create the membership offer.");
     }
   }
@@ -146,7 +175,7 @@ export class MembershipService {
       let mOffers = [];
 
       membershipOffer.map(async mo => {
-        mOffers.push({ 
+        mOffers.push({
           id: mo.id,
           membership: await this.findMembership(membershipId),
           offer: await this.findOffer(mo.offerId)
