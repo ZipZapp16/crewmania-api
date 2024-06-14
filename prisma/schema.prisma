@@ -45,6 +45,7 @@ model User {
   loginOption    String
   firebaseToken  String?
   role           String
+  enabled        Boolean          @default(true)
   // * Relations
   userOccupancy  UserOccupancy?
   userMembership UserMembership[]
@@ -80,6 +81,7 @@ model PositionsHerarchy {
   hierarchy     Hierarchy       @relation(fields: [hierarchyId], references: [id])
   hierarchyId   String
   userOccupancy UserOccupancy[]
+  enabled       Boolean         @default(true)
   // * End Relations
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -90,6 +92,7 @@ model PositionsHerarchy {
 model Position {
   id                String              @id @unique @default(uuid())
   name              String
+  enabled           Boolean             @default(true)
   // * Relations
   positionsHerarchy PositionsHerarchy[]
   // * End Relations
@@ -102,6 +105,7 @@ model Position {
 model Hierarchy {
   id                String              @id @unique @default(uuid())
   name              String
+  enabled           Boolean             @default(true)
   // * Relations
   positionsHerarchy PositionsHerarchy[]
   // * End Relations
@@ -118,6 +122,7 @@ model Headquarter {
   country       String
   state         String
   city          String
+  enabled       Boolean         @default(true)
   // * Relations
   UserOccupancy UserOccupancy[]
   // * End Relations
@@ -132,6 +137,7 @@ model UserMembership {
   dateStart         DateTime        @default(now())
   dateEnd           DateTime
   renovation        Boolean
+  enabled           Boolean         @default(true)
   // * Relations
   user              User?           @relation(fields: [userId], references: [id])
   userId            String?
@@ -151,6 +157,7 @@ model Membership {
   cost            Decimal
   currency        String
   durationDays    Int
+  enabled         Boolean           @default(true)
   // * Relations
   membershipOffer MembershipOffer[]
   // * End Relations
@@ -166,7 +173,7 @@ model Offer {
   percentageOffer Decimal
   startDate       DateTime?
   endDate         DateTime?
-  enabled         Boolean
+  enabled         Boolean           @default(true)
   // * Relations
   membershipOffer MembershipOffer[]
   // * End Relations
@@ -185,6 +192,7 @@ model MembershipOffer {
   offerId        String?
   userMembership UserMembership[]
   // * End Relations
+  enabled        Boolean          @default(true)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
@@ -202,6 +210,7 @@ model UserValidation {
   userId             String?          @unique
   // * End Relations
   url                String
+  enabled            Boolean          @default(true)
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
 
@@ -215,6 +224,7 @@ model ValidationForm {
   // * Relations
   userValidation UserValidation?
   // * End Relations
+  enabled        Boolean         @default(true)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
@@ -228,6 +238,7 @@ model StatusValidation {
   // * Relations
   userValidation UserValidation[]
   // * End Relations
+  enabled        Boolean          @default(true)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
