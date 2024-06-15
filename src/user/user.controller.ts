@@ -22,12 +22,12 @@ export class UserController {
         return this.userService.findAllUsers();
     }
 
-    @Get('/:userId')
+    @Get('user/:userId')
     findUser(@Param('userId', ParseUUIDPipe) userId: string) {
         return this.userService.findUser(userId);
     }
 
-    @Patch('/:userId')
+    @Patch('user/:userId')
     updateUser(
         @Param('userId', ParseUUIDPipe) userId: string,
         @Body() updateUserDto: UpdateUserDto
@@ -35,7 +35,7 @@ export class UserController {
         return this.userService.updateUser(userId, updateUserDto);
     }
 
-    @Delete('/:userId')
+    @Delete('user/:userId')
     deleteUser(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserResponse> {
         return this.userService.deleteUser(userId);
     }
