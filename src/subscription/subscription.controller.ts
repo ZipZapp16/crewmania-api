@@ -4,7 +4,7 @@ import { SubscriptionService } from './subscription.service';
 import { MembershipOfferResponse, MembershipResponse, OfferResponse, FindMembershipOfferResponse } from './interfaces';
 import { CreateOfferDto, UpdateMembershipDto, UpdateMembershipOfferDto, UpdateOfferDto, CreateMembershipDto, CreateMembershipOfferDto } from './dto';
 
-@ApiTags('Membership')
+@ApiTags('Subscription')
 @Controller('subscription')
 export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) { }
