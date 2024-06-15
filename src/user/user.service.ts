@@ -5,14 +5,14 @@ import * as luxonTime from 'luxon';
 
 import { UserResponse, UserValidationResponse, UserMembershipResponse, UserOccupancyResponse } from './interfaces';
 import { CreateUserMembershipDto, CreateUserOccupancyDto, UpdateUserDto, UpdateUserOccupancyDto, CreateUserValidationDto } from './dto';
-import { MembershipService } from 'src/membership/membership.service';
-import { MembershipResponse } from 'src/membership/interfaces';
+import { SubscriptionService } from 'src/subscription/subscription.service';
+import { MembershipResponse } from 'src/subscription/interfaces';
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly prismaService: PrismaService,
-        private readonly membershipService: MembershipService
+        private readonly subscriptionService: SubscriptionService
     ) { }
 
     async findUser(userId: string): Promise<UserResponse> {
@@ -187,7 +187,7 @@ export class UserService {
             const { userId, membershipOfferId } = userMembershipDto;
 
             // * Obtiene la membresia elegida
-            const membership: MembershipResponse = await this.membershipService.findMembership(membershipOfferId);
+            const membership: MembershipResponse = await this.subscriptionService.findMembership(membershipOfferId);
 
             // * Obtiene la fecha y hora actual y le suma la cantidad de dias de acuerdo a la membresia seleccionada.
             const dateStart: luxonTime.DateTime<true> = luxonTime.DateTime.now();

@@ -4,11 +4,11 @@ import { SeedController } from './seed.controller';
 import { OccupancyModule } from 'src/occupancy/occupancy.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { ValidationModule } from 'src/validation/validation.module';
-import { MembershipModule } from 'src/membership/membership.module';
+import { SubscriptionModule } from 'src/subscription/subscription.module';
 
 @Module({
   controllers: [SeedController],
   providers: [SeedService],
-  imports: [PrismaModule, OccupancyModule, ValidationModule, MembershipModule]
+  imports: [PrismaModule, OccupancyModule, ValidationModule, SubscriptionModule]
 })
 export class SeedModule {}

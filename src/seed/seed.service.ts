@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { OccupancyService } from '../occupancy/occupancy.service';
 import { initialData } from './data/seed-data';
 import { ValidationService } from '../validation/validation.service';
-import { MembershipService } from '../membership/membership.service';
+import { SubscriptionService } from 'src/subscription/subscription.service';
 @Injectable()
 export class SeedService {
 
   constructor(
     private readonly occupancyService: OccupancyService,
     private readonly validationService: ValidationService,
-    private readonly membershipService: MembershipService
+    private readonly subscriptionService: SubscriptionService
   ) { }
 
 
@@ -137,7 +137,7 @@ export class SeedService {
     let memberships = [];
 
     seedMemberships.map(membership => {
-      memberships.push(this.membershipService.createMembership(membership));
+      memberships.push(this.subscriptionService.createMembership(membership));
     })
     
     await Promise.all(memberships);
@@ -151,7 +151,7 @@ export class SeedService {
     const mOffers = [];
 
     seedMOffers.forEach(offer => {
-      mOffers.push(this.membershipService.createOffer(offer))
+      mOffers.push(this.subscriptionService.createOffer(offer))
     });
 
     await Promise.all(mOffers)
@@ -160,8 +160,8 @@ export class SeedService {
   }
 
   private async insertMembershipOffers() {
-    const { data: membershipsDb } = await this.membershipService.findAllMembership();
-    const { data: offersDb } = await this.membershipService.findAllOffers();
+    const { data: membershipsDb } = await this.subscriptionService.findAllMembership();
+    const { data: offersDb } = await this.subscriptionService.findAllOffers();
 
     const memberships = Object.entries(membershipsDb).map(([_, values]) => values);
     const offers = Object.entries(offersDb).map(([_, values]) => values);
@@ -171,9 +171,9 @@ export class SeedService {
     memberships.map(membership => {
       offers.map(offer => {
         if(membership.level === "Diamante" && membership.type === "Anual" || membership.level === "Diamond" && membership.type === "Anual") {
-          mOffers.push(this.membershipService.createMembershipOffer({ membershipId: membership.id, offerId: offer.id }));
+          mOffers.push(this.subscriptionService.createMembershipOffer({ membershipId: membership.id, offerId: offer.id }));
         } else {
-          mOffers.push(this.membershipService.createMembershipOffer({ membershipId: membership.id }));
+          mOffers.push(this.subscriptionService.createMembershipOffer({ membershipId: membership.id }));
         }
       })
     })
