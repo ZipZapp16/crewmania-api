@@ -154,7 +154,7 @@ model Membership {
   id              String            @id @unique @default(uuid())
   level           String
   type            String
-  cost            Decimal
+  cost            Decimal           @db.Decimal(10, 2)
   currency        String
   durationDays    Int
   enabled         Boolean           @default(true)

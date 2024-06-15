@@ -169,7 +169,7 @@ export interface Membership {
     id?: string;
     level: ValidLvlSusciptionsSP | ValidLevelSusciptionsEN;
     type: ValidDurationSuscriptionsSP | ValidDurationSuscriptionsEN;
-    cost: number;
+    cost: string;
     durationDays: number;
     currency: ValidCurrencies;
     membershipOfferId?: string;
@@ -179,70 +179,70 @@ export const Memberships: Membership[] = [
     {
         level: "Gratuita",
         type: "Semanal",
-        cost: 0,
+        cost: "0",
         currency: "MXN",
         durationDays: 7
     },
     {
         level: "Oro",
         type: "Mensual",
-        cost: 199.0,
+        cost: "199.0",
         currency: "MXN",
         durationDays: 30
     },
     {
         level: "Platino",
         type: "Mensual",
-        cost: 299.0,
+        cost: "299.0",
         currency: "MXN",
         durationDays: 30
     },
     {
         level: "Diamante",
         type: "Mensual",
-        cost: 449.0,
+        cost: "449.0",
         currency: "MXN",
         durationDays: 30
     },
     {
         level: "Oro",
         type: "Semestral",
-        cost: 399.0,
+        cost: "399.0",
         currency: "MXN",
         durationDays: 180
     },
     {
         level: "Platino",
         type: "Semestral",
-        cost: 499.0,
+        cost: "499.0",
         currency: "MXN",
         durationDays: 180
     },
     {
         level: "Diamante",
         type: "Semestral",
-        cost: 699.0,
+        cost: "699.0",
         currency: "MXN",
         durationDays: 180
     },
     {
         level: "Oro",
         type: "Anual",
-        cost: 449.0,
+        cost: "449.0",
         currency: "MXN",
         durationDays: 365
     },
     {
         level: "Platino",
         type: "Anual",
-        cost: 699.0,
+        cost: "699.0",
         currency: "MXN",
         durationDays: 365
     },
     {
         level: "Diamante",
         type: "Anual",
-        cost: 999.0,
+        cost: "999.0",
         currency: "MXN",
         durationDays: 365
     },
@@ -250,70 +250,70 @@ export const Memberships: Membership[] = [
     {
         level: "Free trial",
         type: "Weekly",
-        cost: 0,
+        cost: "0",
         currency: "USD",
         durationDays: 7
     },
     {
         level: "Gold",
         type: "Monthly",
-        cost: 9.95,
+        cost: "9.95",
         currency: "USD",
         durationDays: 30
     },
     {
         level: "Platinum",
         type: "Monthly",
-        cost: 14.95,
+        cost: "14.95",
         currency: "USD",
         durationDays: 30
     },
     {
         level: "Diamond",
         type: "Monthly",
-        cost: 22.45,
+        cost: "22.45",
         currency: "USD",
         durationDays: 30
     },
     {
         level: "Oro",
         type: "Half-yearly",
-        cost: 19.95,
+        cost: "19.95",
         currency: "USD",
         durationDays: 180
     },
     {
         level: "Platinum",
         type: "Half-yearly",
-        cost: 24.95,
+        cost: "24.95",
         currency: "USD",
         durationDays: 180
     },
     {
         level: "Diamond",
         type: "Half-yearly",
-        cost: 34.95,
+        cost: "34.95",
         currency: "USD",
         durationDays: 180
     },
     {
         level: "Oro",
         type: "Anual",
-        cost: 22.45,
+        cost: "22.45",
         currency: "USD",
         durationDays: 365
     },
     {
         level: "Platinum",
         type: "Anual",
-        cost: 34.95,
+        cost: "34.95",
         currency: "USD",
         durationDays: 365
     },
     {
         level: "Diamond",
         type: "Anual",
-        cost: 49.95,
+        cost: "49.95",
         currency: "USD",
         durationDays: 365
     },
