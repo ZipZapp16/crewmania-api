@@ -100,27 +100,27 @@ export class OccupancyController {
   }
 
   // * Comienzan endpoints para positionHerarchys
-  @Post('/positionHerarchys')
+  @Post('/positionHierarchies')
   createPositionHierarchy(@Body() createPositionHierarchyDto: CreatePositionHierarchyDto): Promise<PositionHierarchyResponse> {
     return this.occupancyService.createPositionHierarchy(createPositionHierarchyDto);
   }
 
-  @Get('/positionHerarchys/:positionHerarchyId')
+  @Get('/positionHierarchies/:positionHerarchyId')
   findPositionHerarchy(@Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string) {
-    this.occupancyService.findPositionHerarchy(positionHerarchyId);
+    return this.occupancyService.findPositionHerarchy(positionHerarchyId);
   }
   
-  @Get('/positionHerarchys/position/:positionId')
+  @Get('/positionHierarchies/position/:positionId')
   findHierarchiesWithPositionId(@Param('positionId', ParseUUIDPipe) positionId: string) {
     return this.occupancyService.findHierarchiesWithPositionId(positionId);
   }
 
-  @Get('/positionHerarchies')
+  @Get('/positionHierarchies')
   findAllPositionsHerarchies(): Promise<PositionHierarchyResponse> {
     return this.occupancyService.findAllPositionHerarchys();
   }
 
-  @Patch('/positionHerarchys/:positionHerarchyId')
+  @Patch('/positionHierarchies/:positionHerarchyId')
   updatePositionHierarchy(
     @Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string,
     @Body() updatePositionHierarchyDto: UpdatePositionHierarchyDto
@@ -128,7 +128,7 @@ export class OccupancyController {
     return this.occupancyService.updatePositionHierarchy(positionHerarchyId, updatePositionHierarchyDto);
   }
 
-  @Delete('/positionHerarchys/:positionHerarchyId')
+  @Delete('/positionHierarchies/:positionHerarchyId')
   deletePositionHierarchy(@Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string) {
     return this.occupancyService.deletePositionHierarchy(positionHerarchyId);
   }
