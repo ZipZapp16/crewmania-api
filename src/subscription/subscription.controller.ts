@@ -77,17 +77,17 @@ export class SubscriptionController {
     return this.subscriptionService.findMembershipOffer(membershipOfferId);
   }
 
+  @Get('/membership-offers')
+  findAllMembershipOffers(): Promise<MembershipOfferResponse> {
+    return this.subscriptionService.findAllMembershipOffers();
+  }
+
   @Patch('/membership-offer/:membershipOfferId')
   updateMembershipOffer(
     @Param('membershipOfferId', ParseUUIDPipe) membershipOfferId: string,
     @Body() updateMembershipOfferDto: UpdateMembershipOfferDto
   ): Promise<MembershipOfferResponse> {
     return this.subscriptionService.updateMembershipOffer(membershipOfferId, updateMembershipOfferDto);
-  }
-
-  @Get('/membership-offers')
-  findAllMembershipOffers(): Promise<MembershipOfferResponse> {
-    return this.subscriptionService.findAllMembershipOffers();
   }
 
   @Delete('/membership-offer/:membershipOfferId')
