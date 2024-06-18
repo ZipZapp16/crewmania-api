@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, UserMembership } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as luxonTime from 'luxon';
 
@@ -186,8 +186,20 @@ export class UserService {
         try {
             const { userId, membershipOfferId } = userMembershipDto;
 
-            // * Obtiene la membresia elegida
-            const membership: MembershipResponse = await this.subscriptionService.findMembership(membershipOfferId);
+            // * Validar que el usuario no se suscriba a la misma opcion si es que ya la pago ante
+            const { data: membershipOffer }: UserMembershipResponse = await this.findUserSubscribedToMembership(userId, membershipOfferId);
+
+            let userSubscribed = membershipOffer as unknown as UserMembership[];
+
+            if(userSubscribed.length > 0) {
+                throw new BadRequestException(`You already have subscribed to this membership.`);
+            }
+
+            //  TODO: LLAMAR API DE PAGOS
+            
+            // * Si no se ha suscrito, obtener el id de la membresia
+            const { data: membershipData } = await this.subscriptionService.findMembershipOffer(membershipOfferId);
+            const membership: MembershipResponse = await this.subscriptionService.findMembership(membershipData['membershipId']);
 
             // * Obtiene la fecha y hora actual y le suma la cantidad de dias de acuerdo a la membresia seleccionada.
             const dateStart: luxonTime.DateTime<true> = luxonTime.DateTime.now();
@@ -210,8 +222,7 @@ export class UserService {
                 data: newUserMembership
             };
         } catch (error) {
-            console.log(error)
-            throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+            throw new BadRequestException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
         }
     }
 
@@ -278,6 +289,20 @@ export class UserService {
         } catch (error) {
             console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+        }
+    }
+
+    async findUserSubscribedToMembership(userId: string, membershipOfferId: string): Promise<UserMembershipResponse>  {
+        try {
+            const userSubscribed = await this.prismaService.userMembership.findMany({ where: { userId, membershipOfferId } });
+
+            return {
+                status: 'ok',
+                message: 'success',
+                data: userSubscribed.length > 0 ? userSubscribed : []
+            };
+        } catch (error) {
+            throw new NotFoundException(`No se encontro el usuario solicitado con el id ${userId}. ${error}`);
         }
     }
 
