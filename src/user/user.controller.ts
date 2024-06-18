@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { UserService } from "./user.service";
 import { UserResponse, UserValidationResponse } from "./interfaces";
-import { CreateUserMembershipDto, CreateUserOccupancyDto, CreateUserValidationDto, UpdateUserDto } from "./dto";
+import { CreateUserMembershipDto, CreateUserOccupancyDto, CreateUserValidationDto, UpdateUserDto, UpdateUserValidationDto } from "./dto";
 import { UserOccupancyResponse } from "./interfaces/user-occupancy-response.interface";
 import { UserMembershipResponse } from "./interfaces/user-membership-response.interface";
 import { UpdateUserOccupancyDto } from './dto/update-user-occupancy.dto';
@@ -106,8 +106,21 @@ export class UserController {
         return this.userService.findAllUserValidations();
     }
 
-    @Get('/:term/validation')
-    findUserValidation(@Param('term', ParseUUIDPipe) term: string): Promise<UserValidationResponse> {
-        return this.userService.findUserValidation(term);
+    @Get('/validation/:validationId')
+    findUserValidation(@Param('validationId', ParseUUIDPipe) validationId: string): Promise<UserValidationResponse> {
+        return this.userService.findUserValidation(validationId);
+    }
+
+    @Patch('/validation/:validationId')
+    updateUserValidation(
+        @Param('validationId', ParseUUIDPipe) validationId: string,
+        @Body() updateUserValidationDto: UpdateUserValidationDto
+    ): Promise<UserValidationResponse> {
+        return this.userService.updateUserValidation(validationId, updateUserValidationDto);
+    }
+
+    @Delete('/validation/:validationId')
+    deleteUserValidation(@Param('validationId', ParseUUIDPipe) validationId: string): Promise<UserValidationResponse> {
+        return this.userService.deleteUserValidation(validationId);
     }
 }

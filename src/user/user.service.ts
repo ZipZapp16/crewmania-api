@@ -4,7 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as luxonTime from 'luxon';
 
 import { UserResponse, UserValidationResponse, UserMembershipResponse, UserOccupancyResponse } from './interfaces';
-import { CreateUserMembershipDto, CreateUserOccupancyDto, UpdateUserDto, UpdateUserOccupancyDto, CreateUserValidationDto } from './dto';
+import { CreateUserMembershipDto, CreateUserOccupancyDto, UpdateUserDto, UpdateUserOccupancyDto, CreateUserValidationDto, UpdateUserValidationDto } from './dto';
 import { SubscriptionService } from 'src/subscription/subscription.service';
 import { MembershipResponse } from 'src/subscription/interfaces';
 
@@ -345,33 +345,49 @@ export class UserService {
         }
     }
 
-    async findUserValidation(term: string): Promise<UserValidationResponse> {
-        const patronUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-        let validation = null;
-
-        if (patronUUID.test(term)) {
-            validation = await this.prismaService.userValidation.findUnique({
-                where: {
-                    id: term
-                }
-            })
-
-            if (!validation) {
-                validation = await this.prismaService.userValidation.findUnique({
-                    where: {
-                        userId: term
-                    }
-                });
-            }
+    async findUserValidation(userValidationId: string): Promise<UserValidationResponse> {
+        try {
+            const userValidation = await this.prismaService.userValidation.findUnique({ where: { id: userValidationId }});
 
             return {
                 status: "ok",
                 message: "success",
-                data: validation
-            }
-        } else {
-            throw new BadRequestException('El termino de busqueda NO es un UUID valido.');
+                data: userValidation
+            };
+        } catch (error) {
+            throw new NotFoundException(`User validation with id ${userValidationId} not found.`);
+        }
+    }
+
+    async updateUserValidation(userValidationId: string, updateUserValidationDto: UpdateUserValidationDto): Promise<UserValidationResponse> {
+        try {
+            const { data: userValidationToUpdate } = await this.findUserValidation(userValidationId);
+
+            const userValidationUpdated = await this.prismaService.userValidation.update({ where: { id: userValidationToUpdate['id'] }, data: updateUserValidationDto });
+
+            return {
+                status: "ok",
+                message: "success",
+                data: userValidationUpdated
+            };
+        } catch (error) {
+            throw new BadRequestException(`Error al actualizar la validacion del usuario. ${error}`);
+        }
+    }
+
+    async deleteUserValidation(userValidationId: string): Promise<UserValidationResponse> {
+        try {
+            const { data: userValidationToDelete } = await this.findUserValidation(userValidationId);
+
+            const userValidationDeleted = await this.prismaService.userValidation.delete({ where: { id: userValidationToDelete['id'] }});
+
+            return {
+                status: "ok",
+                message: "success",
+                data: userValidationDeleted
+            };
+        } catch (error) {
+            throw new BadRequestException(`Error al eliminar la validacion del usuario. ${error}`);
         }
     }
 }
