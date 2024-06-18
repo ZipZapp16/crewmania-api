@@ -7,6 +7,7 @@ import { UserResponse, UserValidationResponse, UserMembershipResponse, UserOccup
 import { CreateUserMembershipDto, CreateUserOccupancyDto, UpdateUserDto, UpdateUserOccupancyDto, CreateUserValidationDto, UpdateUserValidationDto } from './dto';
 import { SubscriptionService } from 'src/subscription/subscription.service';
 import { MembershipResponse } from 'src/subscription/interfaces';
+import { UpdateUserMembershipDto } from './dto/update-user-membership.dto';
 
 @Injectable()
 export class UserService {
@@ -46,7 +47,7 @@ export class UserService {
     async updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<UserResponse> {
         try {
             const { data: userToUpdate } = await this.findUser(userId);
-            
+
             const userUpdated = await this.prismaService.user.update({ where: { id: userToUpdate['id'] }, data: updateUserDto });
 
             return {
@@ -191,12 +192,12 @@ export class UserService {
 
             let userSubscribed = membershipOffer as unknown as UserMembership[];
 
-            if(userSubscribed.length > 0) {
+            if (userSubscribed.length > 0) {
                 throw new BadRequestException(`You already have subscribed to this membership.`);
             }
 
             //  TODO: LLAMAR API DE PAGOS
-            
+
             // * Si no se ha suscrito, obtener el id de la membresia
             const { data: membershipData } = await this.subscriptionService.findMembershipOffer(membershipOfferId);
             const membership: MembershipResponse = await this.subscriptionService.findMembership(membershipData['membershipId']);
@@ -238,6 +239,20 @@ export class UserService {
         } catch (error) {
             console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+        }
+    }
+
+    async findUserMembership(userMembershipId: string): Promise<UserMembershipResponse> {
+        try {
+            const userMembership = await this.prismaService.userMembership.findUnique({ where: { id: userMembershipId } });
+
+            return {
+                status: 'ok',
+                message: 'success',
+                data: userMembership
+            };
+        } catch (error) {
+            throw new NotFoundException(`No se pudo encontrar user membership with id ${userMembershipId}. ${error}`);
         }
     }
 
@@ -292,7 +307,23 @@ export class UserService {
         }
     }
 
-    async findUserSubscribedToMembership(userId: string, membershipOfferId: string): Promise<UserMembershipResponse>  {
+    async updateUserMembership(userMembershipId: string, updateUserMembershipDto: UpdateUserMembershipDto): Promise<UserMembershipResponse> {
+        try {
+            const { data: userMembershipToUpdate } = await this.findUserMembership(userMembershipId);
+
+            const userMembershipUpdated = await this.prismaService.userMembership.update({ where: { id: userMembershipToUpdate['id'] }, data: updateUserMembershipDto });
+
+            return {
+                status: 'ok',
+                message: 'success',
+                data: userMembershipUpdated
+            };
+        } catch (error) {
+            throw new BadRequestException(`Error al actualizar user membership with id ${userMembershipId}. ${error}`);
+        }
+    }
+
+    async findUserSubscribedToMembership(userId: string, membershipOfferId: string): Promise<UserMembershipResponse> {
         try {
             const userSubscribed = await this.prismaService.userMembership.findMany({ where: { userId, membershipOfferId } });
 
@@ -303,6 +334,22 @@ export class UserService {
             };
         } catch (error) {
             throw new NotFoundException(`No se encontro el usuario solicitado con el id ${userId}. ${error}`);
+        }
+    }
+
+    async deleteUserMembership(userMembershipId: string): Promise<UserMembershipResponse> {
+        try {
+            const { data: userMembershipToDelete } = await this.findUserMembership(userMembershipId);
+
+            const userMembershipDeleted = await this.prismaService.userMembership.delete({ where: { id: userMembershipToDelete['id'] } });
+
+            return {
+                status: 'ok',
+                message: 'success',
+                data: userMembershipDeleted
+            };
+        } catch (error) {
+            throw new BadRequestException(`No se pudo borrar el usuario solicitado con el id ${userMembershipId}. ${error}`);
         }
     }
 
@@ -347,7 +394,7 @@ export class UserService {
 
     async findUserValidation(userValidationId: string): Promise<UserValidationResponse> {
         try {
-            const userValidation = await this.prismaService.userValidation.findUnique({ where: { id: userValidationId }});
+            const userValidation = await this.prismaService.userValidation.findUnique({ where: { id: userValidationId } });
 
             return {
                 status: "ok",
@@ -379,7 +426,7 @@ export class UserService {
         try {
             const { data: userValidationToDelete } = await this.findUserValidation(userValidationId);
 
-            const userValidationDeleted = await this.prismaService.userValidation.delete({ where: { id: userValidationToDelete['id'] }});
+            const userValidationDeleted = await this.prismaService.userValidation.delete({ where: { id: userValidationToDelete['id'] } });
 
             return {
                 status: "ok",

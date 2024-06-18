@@ -6,6 +6,7 @@ import { CreateUserMembershipDto, CreateUserOccupancyDto, CreateUserValidationDt
 import { UserOccupancyResponse } from "./interfaces/user-occupancy-response.interface";
 import { UserMembershipResponse } from "./interfaces/user-membership-response.interface";
 import { UpdateUserOccupancyDto } from './dto/update-user-occupancy.dto';
+import { UpdateUserMembershipDto } from './dto/update-user-membership.dto';
 
 
 @ApiTags('Users')
@@ -70,7 +71,7 @@ export class UserController {
     }
 
     @Delete('/:userId/userOccupancy')
-    deleteUserOccupancy(@Param('userId', ParseUUIDPipe) userId: string,): Promise<UserOccupancyResponse> {
+    deleteUserOccupancy(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupancyResponse> {
         return this.userService.deleteUserOccupancy(userId);
     }
 
@@ -93,6 +94,19 @@ export class UserController {
     @Get('/:userId/memberships/validity')
     getValidityMembership(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserMembershipResponse> {
         return this.userService.findValidityMembership(userId);
+    }
+
+    @Patch('/memberships/:userMembershipId')
+    updateUserMembership(
+        @Param('userMembershipId', ParseUUIDPipe) userMembershipId: string,
+        @Body() updateUserMembershipDto: UpdateUserMembershipDto
+    ): Promise<UserMembershipResponse> {
+        return this.userService.updateUserMembership(userMembershipId, updateUserMembershipDto);
+    }
+
+    @Delete('/memberships/:userMembershipId')
+    deleteUserMembership(@Param('userMembershipId', ParseUUIDPipe) userMembershipId: string): Promise<UserMembershipResponse> {
+        return this.userService.deleteUserMembership(userMembershipId);
     }
 
     // * Comienzan endpoints para userValidation
