@@ -204,8 +204,8 @@ model UserValidation {
   // * Relations
   validationForm     ValidationForm   @relation(fields: [validationFormId], references: [id])
   validationFormId   String           @unique
-  statusValidation   StatusValidation @relation(fields: [statusValidationId], references: [id])
-  statusValidationId String
+  statusValidation   StatusValidation? @relation(fields: [statusValidationId], references: [id])
+  statusValidationId String?
   user               User?            @relation(fields: [userId], references: [id])
   userId             String?          @unique
   // * End Relations

@@ -27,5 +27,6 @@ export class CreateUserValidationDto {
         default: '65042bc5-ed19-4076-8fd5-b10ae711ef41', description: 'Id which represents the ID field of the status of the validation selected by the user'
     })
     @IsUUID()
+    @IsOptional()
     statusValidationId: string | null;
 }
