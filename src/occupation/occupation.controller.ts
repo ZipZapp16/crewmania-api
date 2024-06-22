@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { OccupancyService } from "./occupancy.service";
+import { OccupancyService } from "./occupation.service";
 import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdateHeadquarterDto, UpdatePositionDto, UpdatePositionHierarchyDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
 import { UpdateHierarchyDto } from './dto/update-hierarchy.dto';
 
-@ApiTags('Occupancy')
-@Controller('occupancy')
+@ApiTags('Occupation')
+@Controller('occupation')
 export class OccupancyController {
   constructor(private readonly occupancyService: OccupancyService) {}
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { OccupancyService } from '../occupancy/occupancy.service';
+import { OccupancyService } from '../occupation/occupation.service';
 import { initialData } from './data/seed-data';
 import { ValidationService } from '../validation/validation.service';
 import { SubscriptionService } from 'src/subscription/subscription.service';
