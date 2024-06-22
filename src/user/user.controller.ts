@@ -33,7 +33,7 @@ export class UserController {
     }
 
     @Get('user/:userId')
-    findUser(@Param('userId', ParseUUIDPipe) userId: string) {
+    findUser(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserResponse> {
         return this.userService.findUser(userId);
     }
 
