@@ -1,4 +1,4 @@
-import { DataResponse } from "src/common/interfaces/data-response.interface";
+import { DataResponse } from "src/common/interfaces";
 
 export interface AuthData {
     id: string;

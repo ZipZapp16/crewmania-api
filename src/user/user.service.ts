@@ -16,7 +16,7 @@ import {
 } from './interfaces';
 
 import { MembershipResponse } from 'src/subscription/interfaces';
-import { DataResponse } from 'src/common/interfaces/data-response.interface';
+import { DataResponse } from 'src/common/interfaces';
 
 import { SubscriptionService } from 'src/subscription/subscription.service';
 import { CommonService } from 'src/common/common.service';

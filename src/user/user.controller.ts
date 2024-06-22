@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Uploa
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 
-import { DataResponse } from "src/common/interfaces/data-response.interface";
+import { DataResponse } from "src/common/interfaces";
 import { UserResponse, UserValidationResponse, UserOccupancyResponse, UserMembershipResponse } from "./interfaces";
 import { 
     CreateUserMembershipDto, 
