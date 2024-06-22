@@ -1,12 +1,21 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
+
+import { DataResponse } from "src/common/interfaces/data-response.interface";
+import { UserResponse, UserValidationResponse, UserOccupancyResponse, UserMembershipResponse } from "./interfaces";
+import { 
+    CreateUserMembershipDto, 
+    CreateUserOccupancyDto, 
+    CreateUserValidationDto, 
+    UpdateUserDto, 
+    UpdateUserValidationDto, 
+    UpdateUserOccupancyDto, 
+    UpdateUserMembershipDto 
+} from "./dto";
+
+import { fileFilter } from "src/helpers";
 import { UserService } from "./user.service";
-import { UserResponse, UserValidationResponse } from "./interfaces";
-import { CreateUserMembershipDto, CreateUserOccupancyDto, CreateUserValidationDto, UpdateUserDto, UpdateUserValidationDto } from "./dto";
-import { UserOccupancyResponse } from "./interfaces/user-occupancy-response.interface";
-import { UserMembershipResponse } from "./interfaces/user-membership-response.interface";
-import { UpdateUserOccupancyDto } from './dto/update-user-occupancy.dto';
-import { UpdateUserMembershipDto } from './dto/update-user-membership.dto';
 
 
 @ApiTags('Users')
@@ -113,6 +122,17 @@ export class UserController {
     @Post('/validation')
     createUserValidation(@Body() createUserValidationDto: CreateUserValidationDto): Promise<UserValidationResponse> {
         return this.userService.createUserValidation(createUserValidationDto);
+    }
+
+    @Post('/validation/uploadUserImageValidation')
+    @UseInterceptors(FileInterceptor('userImageValidation', {
+        fileFilter: fileFilter
+    }))
+    uploadUserImageValidation(
+        @UploadedFile() file: Express.Multer.File,
+        @Body() idUser: { userId: string }
+    ): Promise<DataResponse> {
+        return this.userService.uploadUserImageValidation(file, idUser.userId);
     }
 
     @Get('/validation')
