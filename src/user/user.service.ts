@@ -1,19 +1,42 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import * as luxonTime from 'luxon';
+import { 
+    BadRequestException, 
+    Injectable, 
+    NotFoundException 
+} from '@nestjs/common';
+
 import { Prisma, UserMembership } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as luxonTime from 'luxon';
 
-import { UserResponse, UserValidationResponse, UserMembershipResponse, UserOccupancyResponse } from './interfaces';
-import { CreateUserMembershipDto, CreateUserOccupancyDto, UpdateUserDto, UpdateUserOccupancyDto, CreateUserValidationDto, UpdateUserValidationDto } from './dto';
-import { SubscriptionService } from 'src/subscription/subscription.service';
+import { 
+    UserResponse, 
+    UserValidationResponse, 
+    UserMembershipResponse, 
+    UserOccupancyResponse 
+} from './interfaces';
+
 import { MembershipResponse } from 'src/subscription/interfaces';
-import { UpdateUserMembershipDto } from './dto/update-user-membership.dto';
+import { DataResponse } from 'src/common/interfaces/data-response.interface';
+
+import { SubscriptionService } from 'src/subscription/subscription.service';
+import { CommonService } from 'src/common/common.service';
+
+import { 
+    CreateUserMembershipDto, 
+    CreateUserOccupancyDto, 
+    UpdateUserDto, 
+    UpdateUserOccupancyDto, 
+    CreateUserValidationDto, 
+    UpdateUserValidationDto, 
+    UpdateUserMembershipDto 
+} from './dto';
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly prismaService: PrismaService,
-        private readonly subscriptionService: SubscriptionService
+        private readonly subscriptionService: SubscriptionService,
+        private readonly commonService: CommonService
     ) { }
 
     async findUser(userId: string): Promise<UserResponse> {
@@ -355,7 +378,10 @@ export class UserService {
 
     async createUserValidation(createUserValidationDto: CreateUserValidationDto): Promise<UserValidationResponse> {
         try {
-            const { statusValidationId, userId, validationFormId, url } = createUserValidationDto;
+
+            const statusValidation = await this.prismaService.statusValidation.findFirst({ where: { type: "En curso" }});
+
+            const { statusValidationId = statusValidation.id, userId, validationFormId, url = "" } = createUserValidationDto;
 
             const data: Prisma.UserValidationCreateInput = {
                 statusValidation: statusValidationId ? { connect: { id: statusValidationId } } : undefined,
@@ -372,10 +398,46 @@ export class UserService {
                 data: userValidation
             };
         } catch (error) {
-            console.log(error)
             throw new BadRequestException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
         }
     }
+
+    async uploadUserImageValidation(file: Express.Multer.File, userId: string): Promise<DataResponse> {
+        try {
+            
+            const patronUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+            if (!patronUUID.test(userId)) {
+                throw new BadRequestException(`The value ${userId} is not a UUID`);
+            }
+
+            const typeImage: string = 'image_validation';
+
+            const { data: userValidation } = await this.findUserValidationByUserId(userId);
+
+            const saveImageUploadedId = await this.commonService.uploadFileS3(file, userId, typeImage);
+
+            if(saveImageUploadedId) {
+                const urlUserImageValidation = await this.prismaService.userValidation.update({
+                    where: { id: userValidation['id'] }, data: {
+                        url: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${userId}/${typeImage}_${userId}.jpg`
+                    }
+                });
+
+                if(!urlUserImageValidation) {
+                    throw new BadRequestException(`Can't save de url to the image validation of user with id ${userId}`);
+                }
+
+                return {
+                    status: "ok",
+                    message: "success"
+                }
+            }
+        } catch (error) {
+            throw new BadRequestException(`Error to upload image. ${error}`);
+        }
+    }
+
 
     async findAllUserValidations(): Promise<UserValidationResponse> {
         try {
@@ -403,6 +465,22 @@ export class UserService {
             };
         } catch (error) {
             throw new NotFoundException(`User validation with id ${userValidationId} not found.`);
+        }
+    }
+
+    async findUserValidationByUserId(userId: string): Promise<UserValidationResponse> {
+        try {
+            const userValidation = await this.prismaService.userValidation.findUnique({ where: { userId } });
+
+            console.log(userValidation)
+
+            return {
+                status: "ok",
+                message: "success",
+                data: userValidation
+            };
+        } catch (error) {
+            throw new NotFoundException(`User validation with id ${userId} not found.`);
         }
     }
 
