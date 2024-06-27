@@ -47,7 +47,7 @@ model User {
   role           String
   enabled        Boolean          @default(true)
   // * Relations
-  userOccupancy  UserOccupancy?
+  userOccupation  UserOccupation?
   userMembership UserMembership[]
   userValidation UserValidation?
   // * End Relations
@@ -57,7 +57,7 @@ model User {
   @@map("users")
 }
 
-model UserOccupancy {
+model UserOccupation {
   id                  String             @id @unique @default(uuid())
   // * Relations
   headquarter         Headquarter        @relation(fields: [headquarterId], references: [id])
@@ -70,7 +70,7 @@ model UserOccupancy {
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
 
-  @@map("userOccupancy")
+  @@map("userOccupation")
 }
 
 model PositionsHerarchy {
@@ -80,7 +80,7 @@ model PositionsHerarchy {
   positionId    String
   hierarchy     Hierarchy       @relation(fields: [hierarchyId], references: [id])
   hierarchyId   String
-  userOccupancy UserOccupancy[]
+  userOccupation UserOccupation[]
   enabled       Boolean         @default(true)
   // * End Relations
   createdAt     DateTime        @default(now())
@@ -124,7 +124,7 @@ model Headquarter {
   city          String
   enabled       Boolean         @default(true)
   // * Relations
-  UserOccupancy UserOccupancy[]
+  userOccupation UserOccupation[]
   // * End Relations
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
