@@ -7,7 +7,7 @@ import { UpdateHierarchyDto } from './dto/update-hierarchy.dto';
 import { UpdateHeadquarterDto } from './dto/update-headquarter.dto';
 
 @Injectable()
-export class OccupancyService {
+export class OccupationService {
   constructor(private readonly prismaService: PrismaService) { }
 
   async createPosition(createPositionDto: CreatePositionDto): Promise<PositionResponse> {

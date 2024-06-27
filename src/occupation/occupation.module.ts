@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { OccupancyService } from './occupation.service';
+import { OccupationService } from './occupation.service';
 import { OccupancyController } from './occupation.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   controllers: [OccupancyController],
-  providers: [OccupancyService],
+  providers: [OccupationService],
   imports: [PrismaModule],
-  exports: [OccupancyService]
+  exports: [OccupationService]
 })
 export class OccupancyModule {}

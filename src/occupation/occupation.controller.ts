@@ -1,29 +1,28 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { OccupancyService } from "./occupation.service";
-import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdateHeadquarterDto, UpdatePositionDto, UpdatePositionHierarchyDto } from "./dto";
+import { OccupationService } from "./occupation.service";
+import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdateHeadquarterDto, UpdatePositionDto, UpdatePositionHierarchyDto, UpdateHierarchyDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
-import { UpdateHierarchyDto } from './dto/update-hierarchy.dto';
 
 @ApiTags('Occupation')
 @Controller('occupation')
 export class OccupancyController {
-  constructor(private readonly occupancyService: OccupancyService) {}
+  constructor(private readonly occupationService: OccupationService) {}
 
   // * Comienzan endpoitns para positions
   @Post('/positions')
   createPosition(@Body() createPositionDto: CreatePositionDto): Promise<PositionResponse> {
-    return this.occupancyService.createPosition(createPositionDto);
+    return this.occupationService.createPosition(createPositionDto);
   }
   
   @Get('/position/:positionId')
   findPosition(@Param('positionId', ParseUUIDPipe) positionId: string): Promise<PositionResponse> {
-    return this.occupancyService.findPosition(positionId);
+    return this.occupationService.findPosition(positionId);
   }
 
   @Get('/positions')
   findAllPositions(): Promise<PositionResponse> {
-    return this.occupancyService.findAllPositions();
+    return this.occupationService.findAllPositions();
   }
 
   @Patch('/position/:positionId')
@@ -31,28 +30,28 @@ export class OccupancyController {
     @Param('positionId', ParseUUIDPipe) positionId: string, 
     @Body() updatePositionDto: UpdatePositionDto
   ): Promise<PositionResponse> {
-    return this.occupancyService.updatePosition(positionId, updatePositionDto);
+    return this.occupationService.updatePosition(positionId, updatePositionDto);
   }
 
   @Delete('/position/:positionId')
   deletePosition(@Param('positionId', ParseUUIDPipe) positionId: string): Promise<PositionResponse> {
-    return this.occupancyService.deletePosition(positionId);
+    return this.occupationService.deletePosition(positionId);
   }
 
   // * Comienzan endpoitns para hierarchys
   @Post('/hierarchys')
   createHierarchys(@Body() createHierarchyDto: CreateHierarchyDto): Promise<HierarchyResponse> {
-    return this.occupancyService.createHierarchys(createHierarchyDto);
+    return this.occupationService.createHierarchys(createHierarchyDto);
   }
 
   @Get('/hierarchy/:hierarchyId')
   findHierarchy(@Param('hierarchyId', ParseUUIDPipe) hierarchyId: string): Promise<HierarchyResponse> {
-    return this.occupancyService.findHierarchy(hierarchyId);
+    return this.occupationService.findHierarchy(hierarchyId);
   }
 
   @Get('/hierarchys')
   findAllHierarchys(): Promise<HierarchyResponse> {
-    return this.occupancyService.findAllHierarchys();
+    return this.occupationService.findAllHierarchys();
   }
 
   @Patch('/hierarchy/:hierarchyId')
@@ -60,30 +59,30 @@ export class OccupancyController {
     @Param('hierarchyId', ParseUUIDPipe) hierarchyId: string,
     @Body() updateHierarchyDto: UpdateHierarchyDto
   ): Promise<HierarchyResponse> {
-    return this.occupancyService.updateHierarchy(hierarchyId, updateHierarchyDto);
+    return this.occupationService.updateHierarchy(hierarchyId, updateHierarchyDto);
   }
 
   @Delete('/hierarchy/:hierarchyId')
   deleteHierarchy(
     @Param('hierarchyId', ParseUUIDPipe) hierarchyId: string
   ): Promise<HierarchyResponse> {
-    return this.occupancyService.deleteHierarchy(hierarchyId);
+    return this.occupationService.deleteHierarchy(hierarchyId);
   }
 
   // * Comienzan endpoints para headquartes
   @Post('/headquarters')
   creatHeadquarter(@Body() createHeadquarterDto: CreateHeadquarterDto): Promise<HeadquarterResponse> {
-    return this.occupancyService.createHeadquarter(createHeadquarterDto);
+    return this.occupationService.createHeadquarter(createHeadquarterDto);
   }
 
   @Get('/headquarter/:headquarterId')
   findHeadquarter(@Param('headquarterId', ParseUUIDPipe) headquarterId: string): Promise<HeadquarterResponse> {
-    return this.occupancyService.findHeadquarter(headquarterId);
+    return this.occupationService.findHeadquarter(headquarterId);
   }
 
   @Get('/headquarters')
   findAllHeadquarters(): Promise<HeadquarterResponse> {
-    return this.occupancyService.findAllHeadquarters();
+    return this.occupationService.findAllHeadquarters();
   }
 
   @Patch('/headquarter/:headquarterId')
@@ -91,33 +90,33 @@ export class OccupancyController {
     @Param('headquarterId', ParseUUIDPipe) headquarterId: string,
     @Body() updateHeadquarterDto: UpdateHeadquarterDto
   ): Promise<HeadquarterResponse> {
-    return this.occupancyService.updateHeadquarter(headquarterId, updateHeadquarterDto);
+    return this.occupationService.updateHeadquarter(headquarterId, updateHeadquarterDto);
   }
 
   @Delete('/headquarter/:headquarterId')
   deleteHeadquarter(@Param('headquarterId', ParseUUIDPipe) headquarterId: string): Promise<HeadquarterResponse> {
-    return this.occupancyService.deleteHeadquarter(headquarterId);
+    return this.occupationService.deleteHeadquarter(headquarterId);
   }
 
   // * Comienzan endpoints para positionHerarchys
   @Post('/positionHierarchies')
   createPositionHierarchy(@Body() createPositionHierarchyDto: CreatePositionHierarchyDto): Promise<PositionHierarchyResponse> {
-    return this.occupancyService.createPositionHierarchy(createPositionHierarchyDto);
+    return this.occupationService.createPositionHierarchy(createPositionHierarchyDto);
   }
 
   @Get('/positionHierarchies/:positionHerarchyId')
   findPositionHerarchy(@Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string) {
-    return this.occupancyService.findPositionHerarchy(positionHerarchyId);
+    return this.occupationService.findPositionHerarchy(positionHerarchyId);
   }
   
   @Get('/positionHierarchies/position/:positionId')
   findHierarchiesWithPositionId(@Param('positionId', ParseUUIDPipe) positionId: string) {
-    return this.occupancyService.findHierarchiesWithPositionId(positionId);
+    return this.occupationService.findHierarchiesWithPositionId(positionId);
   }
 
   @Get('/positionHierarchies')
   findAllPositionsHerarchies(): Promise<PositionHierarchyResponse> {
-    return this.occupancyService.findAllPositionHerarchys();
+    return this.occupationService.findAllPositionHerarchys();
   }
 
   @Patch('/positionHierarchies/:positionHerarchyId')
@@ -125,11 +124,11 @@ export class OccupancyController {
     @Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string,
     @Body() updatePositionHierarchyDto: UpdatePositionHierarchyDto
   ) {
-    return this.occupancyService.updatePositionHierarchy(positionHerarchyId, updatePositionHierarchyDto);
+    return this.occupationService.updatePositionHierarchy(positionHerarchyId, updatePositionHierarchyDto);
   }
 
   @Delete('/positionHierarchies/:positionHerarchyId')
   deletePositionHierarchy(@Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string) {
-    return this.occupancyService.deletePositionHierarchy(positionHerarchyId);
+    return this.occupationService.deletePositionHierarchy(positionHerarchyId);
   }
 }

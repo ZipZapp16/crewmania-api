@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { OccupancyService } from '../occupation/occupation.service';
+import { OccupationService } from '../occupation/occupation.service';
 import { initialData } from './data/seed-data';
 import { ValidationService } from '../validation/validation.service';
 import { SubscriptionService } from 'src/subscription/subscription.service';
@@ -7,7 +7,7 @@ import { SubscriptionService } from 'src/subscription/subscription.service';
 export class SeedService {
 
   constructor(
-    private readonly occupancyService: OccupancyService,
+    private readonly occupationService: OccupationService,
     private readonly validationService: ValidationService,
     private readonly subscriptionService: SubscriptionService
   ) { }
@@ -37,7 +37,7 @@ export class SeedService {
     const positions = [];
 
     seedPositions.forEach(position => {
-      positions.push(this.occupancyService.createPosition(position))
+      positions.push(this.occupationService.createPosition(position))
     });
 
     await Promise.all(positions);
@@ -51,7 +51,7 @@ export class SeedService {
     const hierarchies = [];
 
     seedHierarchies.forEach(hierarchy => {
-      hierarchies.push(this.occupancyService.createHierarchys(hierarchy))
+      hierarchies.push(this.occupationService.createHierarchys(hierarchy))
     })
     await Promise.all(hierarchies);
 
@@ -59,8 +59,8 @@ export class SeedService {
   }
 
   private async insertPositionHierarchies() {
-    const { data: positionsDb } = await this.occupancyService.findAllPositions();
-    const { data: hierarchiesDb } = await this.occupancyService.findAllHierarchys();
+    const { data: positionsDb } = await this.occupationService.findAllPositions();
+    const { data: hierarchiesDb } = await this.occupationService.findAllHierarchys();
 
     const positions = Object.entries(positionsDb).map(([_, values]) => values);
     const hierarchies = Object.entries(hierarchiesDb).map(([_, values]) => values);
@@ -71,12 +71,12 @@ export class SeedService {
         hierarchies.map(({ id: hierarchyId, name: hierarchyName }) => {
           if (positionName === 'Piloto') {
             if (hierarchyName === 'Cap.' || hierarchyName === 'P.O.') {
-              positionHierarhies.push(this.occupancyService.createPositionHierarchy({ positionId, hierarchyId }))
+              positionHierarhies.push(this.occupationService.createPositionHierarchy({ positionId, hierarchyId }))
             }
           } 
           else {
             if (hierarchyName === 'ESB' || hierarchyName === 'SOB') {
-              positionHierarhies.push(this.occupancyService.createPositionHierarchy({ positionId, hierarchyId }))
+              positionHierarhies.push(this.occupationService.createPositionHierarchy({ positionId, hierarchyId }))
             }
           }
         });
@@ -93,7 +93,7 @@ export class SeedService {
     let headquarters = [];
 
     seedHeadquarter.forEach(headquarter => {
-      headquarters.push(this.occupancyService.createHeadquarter(headquarter));
+      headquarters.push(this.occupationService.createHeadquarter(headquarter));
     });
 
     await Promise.all(headquarters);
