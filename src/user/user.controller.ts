@@ -3,14 +3,14 @@ import { ApiBearerAuth, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger
 import { FileInterceptor } from "@nestjs/platform-express";
 
 import { DataResponse } from "src/common/interfaces";
-import { UserResponse, UserValidationResponse, UserOccupancyResponse, UserMembershipResponse } from "./interfaces";
+import { UserResponse, UserValidationResponse, UserOccupationResponse, UserMembershipResponse } from "./interfaces";
 import { 
     CreateUserMembershipDto, 
-    CreateUserOccupancyDto, 
+    CreateUserOccupationDto, 
     CreateUserValidationDto, 
     UpdateUserDto, 
     UpdateUserValidationDto, 
-    UpdateUserOccupancyDto, 
+    UpdateUserOccupationDto, 
     UpdateUserMembershipDto 
 } from "./dto";
 
@@ -50,37 +50,37 @@ export class UserController {
         return this.userService.deleteUser(userId);
     }
 
-    // * Comienzan endpoints para userOccupancy
-    @Post('/userOccupancy')
-    createUserOccupancy(@Body() userOccupancyDto: CreateUserOccupancyDto): Promise<UserOccupancyResponse> {
-        return this.userService.createUserOccupancy(userOccupancyDto);
+    // * Comienzan endpoints para userOccupation
+    @Post('/userOccupation')
+    createUserOccupation(@Body() createUserOccupationDto: CreateUserOccupationDto): Promise<UserOccupationResponse> {
+        return this.userService.createUserOccupation(createUserOccupationDto);
     }
 
-    @Get('/userOccupancy/:userOccupancyId')
-    findUserOccupancy(@Param('userOccupancyId', ParseUUIDPipe) userOccupancyId: string): Promise<UserOccupancyResponse> {
-        return this.userService.findUserOccupancy(userOccupancyId);
+    @Get('/userOccupation/:userOccupationId')
+    findUserOccupancy(@Param('userOccupancyId', ParseUUIDPipe) userOccupation: string): Promise<UserOccupationResponse> {
+        return this.userService.findUserOccupancy(userOccupation);
     }
 
-    @Get('/:userId/userOccupancy')
-    findUserOccupancyByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupancyResponse> {
+    @Get('/:userId/userOccupation')
+    findUserOccupancyByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupationResponse> {
         return this.userService.findUserOccupancyByUserId(userId);
     }
 
-    @Get('/userOccupancy')
-    findAllUserOccupancy(): Promise<UserOccupancyResponse> {
+    @Get('/userOccupation')
+    findAllUserOccupancy(): Promise<UserOccupationResponse> {
         return this.userService.findAllUserOccupancy();
     }
 
-    @Patch('/:userId/userOccupancy')
+    @Patch('/:userId/userOccupation')
     updateUserOccupancy(
         @Param('userId', ParseUUIDPipe) userId: string,
-        @Body() updateUserOccupancyDto: UpdateUserOccupancyDto
-    ): Promise<UserOccupancyResponse> {
+        @Body() updateUserOccupancyDto: UpdateUserOccupationDto
+    ): Promise<UserOccupationResponse> {
         return this.userService.updateUserOccupancy(userId, updateUserOccupancyDto);
     }
 
-    @Delete('/:userId/userOccupancy')
-    deleteUserOccupancy(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupancyResponse> {
+    @Delete('/:userId/userOccupation')
+    deleteUserOccupancy(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupationResponse> {
         return this.userService.deleteUserOccupancy(userId);
     }
 

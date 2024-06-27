@@ -12,7 +12,7 @@ import {
     UserResponse, 
     UserValidationResponse, 
     UserMembershipResponse, 
-    UserOccupancyResponse 
+    UserOccupationResponse 
 } from './interfaces';
 
 import { MembershipResponse } from 'src/subscription/interfaces';
@@ -23,9 +23,9 @@ import { CommonService } from 'src/common/common.service';
 
 import { 
     CreateUserMembershipDto, 
-    CreateUserOccupancyDto, 
+    CreateUserOccupationDto, 
     UpdateUserDto, 
-    UpdateUserOccupancyDto, 
+    UpdateUserOccupationDto, 
     CreateUserValidationDto, 
     UpdateUserValidationDto, 
     UpdateUserMembershipDto 
@@ -100,18 +100,18 @@ export class UserService {
     }
 
     // * Comienzan endpoints para userOccupancy
-    async createUserOccupancy(userOccupancyDto: CreateUserOccupancyDto): Promise<UserOccupancyResponse> {
+    async createUserOccupation(userOccupancyDto: CreateUserOccupationDto): Promise<UserOccupationResponse> {
         try {
 
             const { headquarterId, positionHerarchyId, userId } = userOccupancyDto;
 
-            const data: Prisma.UserOccupancyCreateInput = {
+            const data: Prisma.UserOccupationCreateInput = {
                 headquarter: headquarterId ? { connect: { id: headquarterId } } : undefined,
                 positionsHerarchy: positionHerarchyId ? { connect: { id: positionHerarchyId } } : undefined,
                 user: userId ? { connect: { id: userId } } : undefined
             };
 
-            const newUserOcc = await this.prismaService.userOccupancy.create({ data });
+            const newUserOcc = await this.prismaService.userOccupation.create({ data });
             return {
                 status: "ok",
                 message: "success",
@@ -123,9 +123,9 @@ export class UserService {
         }
     }
 
-    async findUserOccupancy(userOccupancyId: string): Promise<UserOccupancyResponse> {
+    async findUserOccupancy(userOccupancyId: string): Promise<UserOccupationResponse> {
         try {
-            const userOccupancy = await this.prismaService.userOccupancy.findUnique({ where: { id: userOccupancyId } });
+            const userOccupancy = await this.prismaService.userOccupation.findUnique({ where: { id: userOccupancyId } });
 
             return {
                 status: "ok",
@@ -137,10 +137,10 @@ export class UserService {
         }
     }
 
-    async findUserOccupancyByUserId(userId: string): Promise<UserOccupancyResponse> {
+    async findUserOccupancyByUserId(userId: string): Promise<UserOccupationResponse> {
         try {
             const { data: user } = await this.findUser(userId);
-            const userOccupancy = await this.prismaService.userOccupancy.findUnique({ where: { userId: user['id'] } });
+            const userOccupancy = await this.prismaService.userOccupation.findUnique({ where: { userId: user['id'] } });
 
             return {
                 status: "ok",
@@ -152,9 +152,9 @@ export class UserService {
         }
     }
 
-    async findAllUserOccupancy(): Promise<UserOccupancyResponse> {
+    async findAllUserOccupancy(): Promise<UserOccupationResponse> {
         try {
-            const usersOccupancy = await this.prismaService.userOccupancy.findMany();
+            const usersOccupancy = await this.prismaService.userOccupation.findMany();
             return {
                 status: "ok",
                 message: "success",
@@ -166,18 +166,18 @@ export class UserService {
         }
     }
 
-    async updateUserOccupancy(idUser: string, updateUserOccupancyDto: UpdateUserOccupancyDto): Promise<UserOccupancyResponse> {
+    async updateUserOccupancy(idUser: string, updateUserOccupationDto: UpdateUserOccupationDto): Promise<UserOccupationResponse> {
         try {
             const { data: userOccupancyToUpdate } = await this.findUserOccupancyByUserId(idUser);
-            const { headquarterId, positionHerarchyId, userId } = updateUserOccupancyDto;
+            const { headquarterId, positionHerarchyId, userId } = updateUserOccupationDto;
 
-            const data: Prisma.UserOccupancyUpdateInput = {
+            const data: Prisma.UserOccupationUpdateInput = {
                 headquarter: headquarterId ? { connect: { id: headquarterId } } : undefined,
                 positionsHerarchy: positionHerarchyId ? { connect: { id: positionHerarchyId } } : undefined,
                 user: userId ? { connect: { id: userId } } : undefined
             };
 
-            const userOccupancyUpdated = await this.prismaService.userOccupancy.update({ where: { id: userOccupancyToUpdate['id'] }, data });
+            const userOccupancyUpdated = await this.prismaService.userOccupation.update({ where: { id: userOccupancyToUpdate['id'] }, data });
 
             return {
                 status: "ok",
@@ -189,11 +189,11 @@ export class UserService {
         }
     }
 
-    async deleteUserOccupancy(userId: string): Promise<UserOccupancyResponse> {
+    async deleteUserOccupancy(userId: string): Promise<UserOccupationResponse> {
         try {
             const { data: userOccupancyToDelete } = await this.findUserOccupancyByUserId(userId);
 
-            const userOccupancyDeleted = await this.prismaService.userOccupancy.delete({ where: { id: userOccupancyToDelete['id'] } });
+            const userOccupancyDeleted = await this.prismaService.userOccupation.delete({ where: { id: userOccupancyToDelete['id'] } });
 
             return {
                 status: 'ok',

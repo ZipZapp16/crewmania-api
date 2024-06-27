@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsUUID } from "class-validator";
 
-export class CreateUserOccupancyDto {
+export class CreateUserOccupationDto {
     
     @ApiProperty({ 
         default: '65042bc5-ed19-4076-8fd5-b10ae711ef41', description: 'Id which represents the ID field of the headquarter selected by the user'
