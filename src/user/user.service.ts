@@ -15,7 +15,7 @@ import {
     UserOccupationResponse 
 } from './interfaces';
 
-import { MembershipResponse } from 'src/subscription/interfaces';
+import { MembershipOfferResponse, MembershipResponse } from 'src/subscription/interfaces';
 import { DataResponse } from 'src/common/interfaces';
 
 import { SubscriptionService } from 'src/subscription/subscription.service';
@@ -99,11 +99,11 @@ export class UserService {
         }
     }
 
-    // * Comienzan endpoints para userOccupancy
-    async createUserOccupation(userOccupancyDto: CreateUserOccupationDto): Promise<UserOccupationResponse> {
+    // * Comienzan endpoints para userOccupation
+    async createUserOccupation(userOccupationDto: CreateUserOccupationDto): Promise<UserOccupationResponse> {
         try {
 
-            const { headquarterId, positionHerarchyId, userId } = userOccupancyDto;
+            const { headquarterId, positionHerarchyId, userId } = userOccupationDto;
 
             const data: Prisma.UserOccupationCreateInput = {
                 headquarter: headquarterId ? { connect: { id: headquarterId } } : undefined,
@@ -123,42 +123,42 @@ export class UserService {
         }
     }
 
-    async findUserOccupancy(userOccupancyId: string): Promise<UserOccupationResponse> {
+    async findUserOccupation(userOccupationId: string): Promise<UserOccupationResponse> {
         try {
-            const userOccupancy = await this.prismaService.userOccupation.findUnique({ where: { id: userOccupancyId } });
+            const userOccupation = await this.prismaService.userOccupation.findUnique({ where: { id: userOccupationId } });
 
             return {
                 status: "ok",
                 message: "success",
-                data: userOccupancy
+                data: userOccupation
             }
         } catch (error) {
-            throw new NotFoundException(`UserOccupancy with id ${userOccupancyId} doesn't exists.`);
+            throw new NotFoundException(`UserOccupation with id ${userOccupationId} doesn't exists.`);
         }
     }
 
-    async findUserOccupancyByUserId(userId: string): Promise<UserOccupationResponse> {
+    async findUserOccupationByUserId(userId: string): Promise<UserOccupationResponse> {
         try {
             const { data: user } = await this.findUser(userId);
-            const userOccupancy = await this.prismaService.userOccupation.findUnique({ where: { userId: user['id'] } });
+            const userOccupation = await this.prismaService.userOccupation.findUnique({ where: { userId: user['id'] } });
 
             return {
                 status: "ok",
                 message: "success",
-                data: userOccupancy
+                data: userOccupation
             }
         } catch (error) {
-            throw new NotFoundException(`UserOccupancy with id ${userId} doesn't exists.`);
+            throw new NotFoundException(`UserOccupation with id ${userId} doesn't exists.`);
         }
     }
 
-    async findAllUserOccupancy(): Promise<UserOccupationResponse> {
+    async findAllUserOccupation(): Promise<UserOccupationResponse> {
         try {
-            const usersOccupancy = await this.prismaService.userOccupation.findMany();
+            const usersOccupation = await this.prismaService.userOccupation.findMany();
             return {
                 status: "ok",
                 message: "success",
-                data: usersOccupancy
+                data: usersOccupation
             };
         } catch (error) {
             console.log(error)
@@ -166,9 +166,9 @@ export class UserService {
         }
     }
 
-    async updateUserOccupancy(idUser: string, updateUserOccupationDto: UpdateUserOccupationDto): Promise<UserOccupationResponse> {
+    async updateUserOccupation(idUser: string, updateUserOccupationDto: UpdateUserOccupationDto): Promise<UserOccupationResponse> {
         try {
-            const { data: userOccupancyToUpdate } = await this.findUserOccupancyByUserId(idUser);
+            const { data: userOccupationToUpdate } = await this.findUserOccupationByUserId(idUser);
             const { headquarterId, positionHerarchyId, userId } = updateUserOccupationDto;
 
             const data: Prisma.UserOccupationUpdateInput = {
@@ -177,31 +177,31 @@ export class UserService {
                 user: userId ? { connect: { id: userId } } : undefined
             };
 
-            const userOccupancyUpdated = await this.prismaService.userOccupation.update({ where: { id: userOccupancyToUpdate['id'] }, data });
+            const userOccupationUpdated = await this.prismaService.userOccupation.update({ where: { id: userOccupationToUpdate['id'] }, data });
 
             return {
                 status: "ok",
                 message: 'success',
-                data: userOccupancyUpdated
+                data: userOccupationUpdated
             }
         } catch (error) {
-            throw new BadRequestException(`Error to update the information of userOccupancy with id ${idUser} ${error}`);
+            throw new BadRequestException(`Error to update the information of userOccupation with id ${idUser} ${error}`);
         }
     }
 
-    async deleteUserOccupancy(userId: string): Promise<UserOccupationResponse> {
+    async deleteUserOccupation(userId: string): Promise<UserOccupationResponse> {
         try {
-            const { data: userOccupancyToDelete } = await this.findUserOccupancyByUserId(userId);
+            const { data: userOccupationToDelete } = await this.findUserOccupationByUserId(userId);
 
-            const userOccupancyDeleted = await this.prismaService.userOccupation.delete({ where: { id: userOccupancyToDelete['id'] } });
+            const userOccupationDeleted = await this.prismaService.userOccupation.delete({ where: { id: userOccupationToDelete['id'] } });
 
             return {
                 status: 'ok',
                 message: 'success',
-                data: userOccupancyDeleted
+                data: userOccupationDeleted
             }
         } catch (error) {
-            throw new BadRequestException(`Error to delete the information of userOccupancy with id ${userId} ${error}`);
+            throw new BadRequestException(`Error to delete the information of userOccupation with id ${userId} ${error}`);
         }
     }
 
@@ -219,7 +219,7 @@ export class UserService {
                 throw new BadRequestException(`You already have subscribed to this membership.`);
             }
 
-            //  TODO: LLAMAR API DE PAGOS
+            //  TODO: LLAMAR API DE PAGOS?
 
             // * Si no se ha suscrito, obtener el id de la membresia
             const { data: membershipData } = await this.subscriptionService.findMembershipOffer(membershipOfferId);
@@ -297,11 +297,32 @@ export class UserService {
     // * Verifica la validacion de la membresia del usuario
     async findValidityMembership(userId: string): Promise<UserMembershipResponse> {
         try {
-            const userMemberships: UserMembershipResponse = await this.findMembershipsByUserId(userId);
+            const { data: userMemberships }: UserMembershipResponse = await this.findMembershipsByUserId(userId);
 
-            // const membership = await this.membershipService.findMembership(membershipId);
+            let membershipOfUser = userMemberships as unknown as UserMembership[];
+
+            if(membershipOfUser.length < 0) {
+                throw new NotFoundException(`The user doesn't have subscribed to any membership.`);
+            }
 
             const today: luxonTime.DateTime<true> = luxonTime.DateTime.now();
+            let vigencyDays = [];
+
+            membershipOfUser.map(async (userMembership) => {
+                const { data: userMembershipOffer }: MembershipOfferResponse = await this.subscriptionService.findMembershipOffer(userMembership.membershipOfferId);
+                const { data: membership }: MembershipResponse = await this.subscriptionService.findMembership(userMembershipOffer['membershipId']);
+
+                console.log(membership, parseFloat(membership['cost']))
+
+                const membershipEndDate = luxonTime.DateTime.fromISO(userMembership.dateEnd.toISOString());
+
+                const daysToRenew = membershipEndDate.diff(today, 'days').days;
+
+                console.log(daysToRenew.toFixed())
+                // if()
+            })
+
+            // const membership = await this.membershipService.findMembership(membershipId);
 
             let totalsDays: number = 0;
 
@@ -326,7 +347,7 @@ export class UserService {
             };
         } catch (error) {
             console.log(error)
-            throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
+            throw new NotFoundException(`Error to find the validation of the membership of the user with id ${userId}. ${error}`);
         }
     }
 

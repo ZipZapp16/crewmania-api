@@ -57,31 +57,31 @@ export class UserController {
     }
 
     @Get('/userOccupation/:userOccupationId')
-    findUserOccupancy(@Param('userOccupancyId', ParseUUIDPipe) userOccupation: string): Promise<UserOccupationResponse> {
-        return this.userService.findUserOccupancy(userOccupation);
+    findUserOccupation(@Param('userOccupationId', ParseUUIDPipe) userOccupationId: string): Promise<UserOccupationResponse> {
+        return this.userService.findUserOccupation(userOccupationId);
     }
 
     @Get('/:userId/userOccupation')
-    findUserOccupancyByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupationResponse> {
-        return this.userService.findUserOccupancyByUserId(userId);
+    findUserOccupationByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupationResponse> {
+        return this.userService.findUserOccupationByUserId(userId);
     }
 
     @Get('/userOccupation')
-    findAllUserOccupancy(): Promise<UserOccupationResponse> {
-        return this.userService.findAllUserOccupancy();
+    findAllUserOccupation(): Promise<UserOccupationResponse> {
+        return this.userService.findAllUserOccupation();
     }
 
     @Patch('/:userId/userOccupation')
-    updateUserOccupancy(
+    updateUserOccupation(
         @Param('userId', ParseUUIDPipe) userId: string,
-        @Body() updateUserOccupancyDto: UpdateUserOccupationDto
+        @Body() updateUserOccupationDto: UpdateUserOccupationDto
     ): Promise<UserOccupationResponse> {
-        return this.userService.updateUserOccupancy(userId, updateUserOccupancyDto);
+        return this.userService.updateUserOccupation(userId, updateUserOccupationDto);
     }
 
     @Delete('/:userId/userOccupation')
-    deleteUserOccupancy(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupationResponse> {
-        return this.userService.deleteUserOccupancy(userId);
+    deleteUserOccupation(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupationResponse> {
+        return this.userService.deleteUserOccupation(userId);
     }
 
     // * Comienzan endpoints para userMembership
