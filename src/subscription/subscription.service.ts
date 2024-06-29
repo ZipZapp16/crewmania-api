@@ -100,6 +100,10 @@ export class SubscriptionService {
 
   async findOffer(offerId: string): Promise<OfferResponse> {
     try {
+      if (!offerId) {
+        throw new BadRequestException("You should provide a valid id.");
+      }
+
       const offer = await this.prismaService.offer.findUnique({ where: { id: offerId } });
 
       return {
@@ -108,7 +112,7 @@ export class SubscriptionService {
         data: offer
       }
     } catch (error) {
-      throw new NotFoundException(`Offer with id ${offerId} doesn't exist.`);
+      throw new NotFoundException(`Offer with id ${offerId} doesn't exist. ${error}`);
     }
   }
 
