@@ -47,7 +47,7 @@ export class SubscriptionController {
   findOffer(@Param('offerId', ParseUUIDPipe) offerId: string): Promise<OfferResponse> {
     return this.subscriptionService.findOffer(offerId);
   }
-  
+
   @Get("/offers")
   findAllOffers(): Promise<OfferResponse> {
     return this.subscriptionService.findAllOffers();
@@ -82,6 +82,11 @@ export class SubscriptionController {
     return this.subscriptionService.findAllMembershipOffers();
   }
 
+  @Get('/membership-offers/:membershipId')
+  findMembershipOffersByMembershipId(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<FindMembershipOfferResponse> {
+    return this.subscriptionService.findMembershipOffersByMembershipId(membershipId);
+  }
+
   @Patch('/membership-offer/:membershipOfferId')
   updateMembershipOffer(
     @Param('membershipOfferId', ParseUUIDPipe) membershipOfferId: string,
@@ -94,9 +99,4 @@ export class SubscriptionController {
   deleteMembershipOffer(@Param('membershipOfferId', ParseUUIDPipe) membershipOfferId: string): Promise<MembershipOfferResponse> {
     return this.subscriptionService.deleteMembershipOffer(membershipOfferId);
   }
-
-  // @Get('/membership-offer/:membershipId')
-  // findMembershipOffer(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<FindMembershipOfferResponse> {
-  //   return this.subscriptionService.findMembershipOffer(membershipId);
-  // }
 }

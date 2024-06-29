@@ -13,7 +13,7 @@ export class SubscriptionService {
     try {
       const membership = await this.prismaService.membership.create({ data: { ...createMembershipDto, cost: new Prisma.Decimal(createMembershipDto.cost) } });
 
-      return {  
+      return {
         status: 'ok',
         message: 'success',
         data: membership
@@ -214,29 +214,38 @@ export class SubscriptionService {
     }
   }
 
-  // async findMembershipOffers(membershipId: string): Promise<FindMembershipOfferResponse> {
-  //   try {
-  //     const membershipOffer = await this.prismaService.membershipOffer.findMany({ where: { membershipId } });
+  // * Devuelve todas las ofertas activas de una membresia dada.
+  async findMembershipOffersByMembershipId(membershipId: string): Promise<FindMembershipOfferResponse> {
+    try {
+      let offers = [];
 
-  //     let mOffers = [];
+      const membershipOffer = await this.prismaService.membershipOffer.findMany({ where: { membershipId, enabled: true } });
 
-  //     membershipOffer.map(async mo => {
-  //       mOffers.push({
-  //         id: mo.id,
-  //         membership: await this.findMembership(membershipId),
-  //         offer: await this.findOffer(mo.offerId)
-  //       })
-  //     })
+      if(membershipOffer.length > 0) {
+        const response = await Promise.all(membershipOffer.map(async ({ offerId }) => {
+          if(offerId) {
+            const { data: offer } = await this.findOffer(offerId);
+    
+            return offer;
+          }
+        }));
+  
+        response.map(offer => {
+          if(offer) {
+            offers.push(offer);
+          }
+        });
+      }
 
-  //     return {
-  //       status: 'ok',
-  //       message: "success",
-  //       data: mOffers
-  //     }
-  //   } catch (error) {
-  //     throw new NotFoundException("Can't reach the membership offer field requested.", error);
-  //   }
-  // }
+      return {
+        status: 'ok',
+        message: "success",
+        data: offers
+      }
+    } catch (error) {
+      throw new NotFoundException(`Can't reach the membership offer field requested. ${error}`);
+    }
+  }
 
   async updateMembershipOffer(membershipOfferId: string, updateMembershipOfferDto: UpdateMembershipOfferDto): Promise<MembershipOfferResponse> {
     try {
