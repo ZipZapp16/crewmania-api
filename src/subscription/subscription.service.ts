@@ -212,8 +212,22 @@ export class SubscriptionService {
     }
   }
 
+  async findMembershipOffersByMembershipId(membershipId: string): Promise<MembershipOfferResponse> {
+    try {
+      const membershipOffers = await this.prismaService.membershipOffer.findMany({ where: { membershipId }});
+
+      return {
+        status: "ok",
+        message: "success",
+        data: membershipOffers
+      }
+    } catch (error) {
+      throw new NotFoundException(`Membership offers not found with membershipId ${membershipId}. ${error}`);
+    }
+  }
+
   // * Devuelve todas las ofertas activas de una membresia dada.
-  async findMembershipOffersByMembershipId(membershipId: string): Promise<FindMembershipOfferResponse> {
+  async findOffersByMembershipId(membershipId: string): Promise<FindMembershipOfferResponse> {
     try {
       let offers = [];
 

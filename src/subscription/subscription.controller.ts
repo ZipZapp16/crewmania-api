@@ -82,8 +82,13 @@ export class SubscriptionController {
     return this.subscriptionService.findAllMembershipOffers();
   }
 
-  @Get('/membership-offers/:membershipId')
-  findMembershipOffersByMembershipId(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<FindMembershipOfferResponse> {
+  @Get('/membership-offers/membershipId/:membershipId/offers')
+  findOffersByMembershipId(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<FindMembershipOfferResponse> {
+    return this.subscriptionService.findOffersByMembershipId(membershipId);
+  }
+
+  @Get('/membership-offers/membershipId/:membershipId')
+  findMembershipOffersByMembershipId(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<MembershipOfferResponse> {
     return this.subscriptionService.findMembershipOffersByMembershipId(membershipId);
   }
 
