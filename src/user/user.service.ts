@@ -1,18 +1,18 @@
 import * as luxonTime from 'luxon';
-import { 
-    BadRequestException, 
-    Injectable, 
-    NotFoundException 
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException
 } from '@nestjs/common';
 
 import { Prisma, UserMembership } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-import { 
-    UserResponse, 
-    UserValidationResponse, 
-    UserMembershipResponse, 
-    UserOccupationResponse 
+import {
+    UserResponse,
+    UserValidationResponse,
+    UserMembershipResponse,
+    UserOccupationResponse
 } from './interfaces';
 
 import { MembershipResponse } from 'src/subscription/interfaces';
@@ -21,14 +21,14 @@ import { DataResponse } from 'src/common/interfaces';
 import { SubscriptionService } from 'src/subscription/subscription.service';
 import { CommonService } from 'src/common/common.service';
 
-import { 
-    CreateUserMembershipDto, 
-    CreateUserOccupationDto, 
-    UpdateUserDto, 
-    UpdateUserOccupationDto, 
-    CreateUserValidationDto, 
-    UpdateUserValidationDto, 
-    UpdateUserMembershipDto 
+import {
+    CreateUserMembershipDto,
+    CreateUserOccupationDto,
+    UpdateUserDto,
+    UpdateUserOccupationDto,
+    CreateUserValidationDto,
+    UpdateUserValidationDto,
+    UpdateUserMembershipDto
 } from './dto';
 import { UserSubscription } from './interfaces/user-membership-response.interface';
 
@@ -119,7 +119,6 @@ export class UserService {
                 data: newUserOcc
             };
         } catch (error) {
-            console.log(error)
             throw new BadRequestException(`Error al crear los datos del usuario. ${error}`);
         }
     }
@@ -162,7 +161,6 @@ export class UserService {
                 data: usersOccupation
             };
         } catch (error) {
-            console.log(error)
             throw new NotFoundException(`No se encontraron datos del usuario. ${error}`);
         }
     }
@@ -217,7 +215,7 @@ export class UserService {
             let userSubscribed = membershipOffer as unknown as UserMembership[];
 
             if (userSubscribed.length > 0) {
-                throw new BadRequestException(`You already have subscribed to this membership.`);
+                throw new BadRequestException(`You already have been subscribed to this membership.`);
             }
 
             //  TODO: LLAMAR API DE PAGOS?
@@ -261,7 +259,6 @@ export class UserService {
                 data: userMemberships
             };
         } catch (error) {
-            console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
         }
     }
@@ -283,71 +280,72 @@ export class UserService {
     // * Devuelve todos los registros existentes en la tabla UserMembership de acuerdo con el Id del usuario
     async findMembershipsByUserId(userId: string): Promise<UserMembershipResponse> {
         try {
-            const membershipByUserId = await this.prismaService.userMembership.findMany({ where: { userId } });
+            const membershipByUserId = await this.prismaService.userMembership.findMany({ where: { userId, enabled: true } });
             return {
                 status: 'ok',
                 message: 'success',
                 data: membershipByUserId
             };
         } catch (error) {
-            console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
         }
     }
 
     // * Verifica la validacion de la membresia del usuario
-    async findValidityMembership(userId: string): Promise<UserMembershipResponse> {
+    async calculateValidationOfUserMembership(userId: string): Promise<UserMembershipResponse> {
         try {
-            const { data: userMemberships }: UserMembershipResponse = await this.findMembershipsByUserId(userId);
+            // * Devuelve todas las subscripciones activas del usuario dado
+            const { data: userMemberships } = await this.findMembershipsByUserId(userId);
 
             let membershipOfUser = userMemberships as unknown as UserMembership[];
 
-            if(membershipOfUser.length < 0) {
+            if (membershipOfUser.length == 0) {
                 throw new NotFoundException(`The user doesn't have subscribed to any membership.`);
             }
 
             const today: luxonTime.DateTime<true> = luxonTime.DateTime.now();
-            let vigencyDays = [];
+            let userSubscriptions: UserSubscription[] = [];
 
-            membershipOfUser.map(async (userMembership) => {
-                const { data: userMembershipOffer }: MembershipOfferResponse = await this.subscriptionService.findMembershipOffer(userMembership.membershipOfferId);
-                const { data: membership }: MembershipResponse = await this.subscriptionService.findMembership(userMembershipOffer['membershipId']);
+            await Promise.all(membershipOfUser.map(async ({ id, membershipOfferId, dateEnd, enabled }) => {
+                const { data: userMembershipOffer } = await this.subscriptionService.findMembershipOffer(membershipOfferId);
+                const { data: membership } = await this.subscriptionService.findMembership(userMembershipOffer['membershipId']);
 
-                console.log(membership, parseFloat(membership['cost']))
+                let membershipEndDate = luxonTime.DateTime.fromISO(dateEnd.toISOString());
+                const daysToRenew = parseInt(membershipEndDate.diff(today, 'days').days.toFixed());
 
-                const membershipEndDate = luxonTime.DateTime.fromISO(userMembership.dateEnd.toISOString());
+                if (daysToRenew > 0) {
+                    if (userSubscriptions.length == 0) {
+                        userSubscriptions.push({ membershipId: membership['id'], daysToRenew, type: membership['type'] });
+                    } else {
+                        const { daysToRenew: remainigDays, membershipId: mId, type: tp } = userSubscriptions[0];
 
-                const daysToRenew = membershipEndDate.diff(today, 'days').days;
-
-                console.log(daysToRenew.toFixed())
-                // if()
-            })
-
-            // const membership = await this.membershipService.findMembership(membershipId);
-
-            let totalsDays: number = 0;
-
-            let response = [];
-
-            // userMemberships.data.forEach(({ dateEnd, membershipId, userId }) => {
-            //     const membershipDateEnd = luxonTime.DateTime.fromISO(dateEnd.toISOString());
-            //     const membershipDays = today.diff(membershipDateEnd, 'days');
-
-            //     let remainingDays = parseInt(membershipDays.days.toString(), 10) * -1;
-
-            //     response.push({ remainingDays: remainingDays > 0 ? remainingDays : 0, membershipId, userId });
-            // });
-
-            // console.log(response)
-            // return userMemberships;
+                        // * Si los dias de subscripcion que ya guarde previamente es menor a los de la segunda subscripcion, entonces solamente se suman y se queda el de mayor duracion
+                        if(remainigDays < daysToRenew) {
+                            userSubscriptions[0] = {
+                                membershipId: membership['id'],
+                                daysToRenew: remainigDays + daysToRenew,
+                                type: membership['type']
+                            }
+                        } else {
+                            userSubscriptions[0] = {
+                                membershipId: mId,
+                                daysToRenew: remainigDays + daysToRenew,
+                                type: tp
+                            }
+                        }
+                    }
+                } else {
+                    // * Si los dias faltantes al termino de la subscripcion son igual a 0, se deshabilita la membresia de menor jerarquia o nivel y se mantiene la de mayor jerarquia o nivel.
+                    await this.prismaService.userMembership.update({ where: { id }, data: { enabled: !enabled } });
+                }
+            }));
 
             return {
                 status: 'ok',
                 message: 'success',
-                data: []
+                data: userSubscriptions
             };
         } catch (error) {
-            console.log(error)
             throw new NotFoundException(`Error to find the validation of the membership of the user with id ${userId}. ${error}`);
         }
     }
@@ -401,7 +399,7 @@ export class UserService {
     async createUserValidation(createUserValidationDto: CreateUserValidationDto): Promise<UserValidationResponse> {
         try {
 
-            const statusValidation = await this.prismaService.statusValidation.findFirst({ where: { type: "En curso" }});
+            const statusValidation = await this.prismaService.statusValidation.findFirst({ where: { type: "En curso" } });
 
             const { statusValidationId = statusValidation.id, userId, validationFormId, url = "" } = createUserValidationDto;
 
@@ -426,7 +424,7 @@ export class UserService {
 
     async uploadUserImageValidation(file: Express.Multer.File, userId: string): Promise<DataResponse> {
         try {
-            
+
             const patronUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
             if (!patronUUID.test(userId)) {
@@ -439,14 +437,14 @@ export class UserService {
 
             const saveImageUploadedId = await this.commonService.uploadFileS3(file, userId, typeImage);
 
-            if(saveImageUploadedId) {
+            if (saveImageUploadedId) {
                 const urlUserImageValidation = await this.prismaService.userValidation.update({
                     where: { id: userValidation['id'] }, data: {
                         url: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${userId}/${typeImage}_${userId}.jpg`
                     }
                 });
 
-                if(!urlUserImageValidation) {
+                if (!urlUserImageValidation) {
                     throw new BadRequestException(`Can't save de url to the image validation of user with id ${userId}`);
                 }
 
@@ -471,7 +469,6 @@ export class UserService {
                 data: userValidations
             };
         } catch (error) {
-            console.log(error)
             throw new NotFoundException(`No se pudo crear los datos de la membresia del usuario. ${error}`);
         }
     }
