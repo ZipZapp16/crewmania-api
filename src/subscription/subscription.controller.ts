@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SubscriptionService } from './subscription.service';
-import { MembershipOfferResponse, MembershipResponse, OfferResponse, FindMembershipOfferResponse } from './interfaces';
+import { MembershipOfferResponse, MembershipResponse, OfferResponse, FindMembershipOfferResponse, MembershipPricesResponse } from './interfaces';
 import { CreateOfferDto, UpdateMembershipDto, UpdateMembershipOfferDto, UpdateOfferDto, CreateMembershipDto, CreateMembershipOfferDto } from './dto';
 
 @ApiTags('Subscription')

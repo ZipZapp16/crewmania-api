@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
-import { MembershipOfferResponse, MembershipResponse, FindMembershipOfferResponse, OfferResponse } from './interfaces';
+import { Offer, Prisma } from '@prisma/client';
+import { MembershipOfferResponse, MembershipResponse, FindMembershipOfferResponse, OfferResponse, MembershipPricesResponse } from './interfaces';
 import { CreateOfferDto, CreateMembershipDto, UpdateMembershipDto, CreateMembershipOfferDto, UpdateOfferDto, UpdateMembershipOfferDto } from './dto';
 
 @Injectable()
@@ -254,6 +254,40 @@ export class SubscriptionService {
         message: "success",
         data: offers
       }
+    } catch (error) {
+      throw new NotFoundException(`Can't reach the membership offer field requested. ${error}`);
+    }
+  }
+
+  async calculateMembershipPrice(membershipId: string): Promise<MembershipPricesResponse> {
+    try {
+      const { data: membership }: MembershipResponse = await this.findMembership(membershipId);
+      const { data: offers } = await this.findMembershipOffersByMembershipId(membershipId);
+
+      const offersFounded = offers as unknown as Offer[];
+
+      let prices = [];
+      const cost = parseFloat(membership['cost']);
+      
+      offersFounded.map(({ percentageOffer, enabled }) => {
+        if(enabled) {
+          const discount = parseFloat(percentageOffer.toString());
+          const priceWithDiscount = (cost * (discount) / 100 );
+  
+          prices.push({
+            membershipId,
+            normalPrice: cost,
+            discount,
+            priceWithDiscount
+          });
+        }
+      });
+
+      return {
+        status: 'ok',
+        message: 'success',
+        data: prices
+      };
     } catch (error) {
       throw new NotFoundException(`Can't reach the membership offer field requested. ${error}`);
     }
