@@ -100,9 +100,9 @@ export class UserController {
         return this.userService.findMembershipsByUserId(userId);
     }
 
-    @Get('/:userId/memberships/validity')
-    getValidityMembership(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserMembershipResponse> {
-        return this.userService.findValidityMembership(userId);
+    @Get('/:userId/membership/validation')
+    calculateValidationOfUserMembership(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserMembershipResponse> {
+        return this.userService.calculateValidationOfUserMembership(userId);
     }
 
     @Patch('/memberships/:userMembershipId')
