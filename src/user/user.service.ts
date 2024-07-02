@@ -15,7 +15,7 @@ import {
     UserOccupationResponse 
 } from './interfaces';
 
-import { MembershipOfferResponse, MembershipResponse } from 'src/subscription/interfaces';
+import { MembershipResponse } from 'src/subscription/interfaces';
 import { DataResponse } from 'src/common/interfaces';
 
 import { SubscriptionService } from 'src/subscription/subscription.service';
@@ -30,6 +30,7 @@ import {
     UpdateUserValidationDto, 
     UpdateUserMembershipDto 
 } from './dto';
+import { UserSubscription } from './interfaces/user-membership-response.interface';
 
 @Injectable()
 export class UserService {
