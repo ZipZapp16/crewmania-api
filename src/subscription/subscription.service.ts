@@ -120,8 +120,6 @@ export class SubscriptionService {
     try {
       const offers = await this.prismaService.offer.findMany();
 
-      console.log(offers)
-
       return {
         status: 'ok',
         message: 'success',
