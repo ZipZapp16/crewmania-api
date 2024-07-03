@@ -68,13 +68,16 @@ export class AuthService {
 
       const userCreated = await this.prismaService.user.create({ data: newData });
 
+      const fullname = `${userCreated.name} ${userCreated.lastname} ${userCreated.secondLastname}`;
 
       return {
         status: "ok",
         message: "success",
-        data: user
+        data: {
+          ...userCreated,
+          token: this.getJWT({ id: userCreated.id, fullname, email: userCreated.email })
+        }
       }
-
     } catch (error) {
       throw new BadRequestException(`Error to register the user. ${error}`);
     }
