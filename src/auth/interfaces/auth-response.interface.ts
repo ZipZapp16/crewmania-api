@@ -17,6 +17,6 @@ export interface AuthData {
     role: string;
 }
 
-export interface AuthResponse extends DataResponse{
+export interface AuthResponse extends DataResponse {
     data: AuthData | AuthData[]
 }
