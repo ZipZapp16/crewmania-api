@@ -80,7 +80,7 @@ export class AuthService {
     }
   }
 
-  getJWT(payload: JwtPayload) {
+  getJWT(payload: JwtPayload): string {
     return this.jwtService.sign(payload);
   }
 }
