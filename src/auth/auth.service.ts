@@ -23,7 +23,7 @@ export class AuthService {
       const isUserExist = await this.prismaService.user.findFirst({ where: { email } });
 
       if (!isUserExist) {
-        throw new UnauthorizedException('Usuario no existe');
+        throw new UnauthorizedException(`The user with email ${email}`);
       }
 
       if (!bcryptjs.compareSync(password, isUserExist.password)) {
@@ -43,7 +43,7 @@ export class AuthService {
         }
       }
     } catch (error) {
-      throw new BadRequestException(`Se genero un error al realizar la solicitud: ${error.message}.`);
+      throw new BadRequestException(`Error to authenticate: ${error.message}.`);
     }
   }
 
@@ -76,8 +76,7 @@ export class AuthService {
       }
 
     } catch (error) {
-      console.log(error)
-      throw new BadRequestException('Ya existe un usuario registrado con ese correo.');
+      throw new BadRequestException(`Error to register the user. ${error}`);
     }
   }
 
