@@ -20,11 +20,7 @@ export class AuthService {
     try {
       const { email, password } = authUserDto;
 
-      const isUserExist = await this.prismaService.user.findFirst({
-        where: {
-          email
-        }
-      });
+      const isUserExist = await this.prismaService.user.findFirst({ where: { email } });
 
       if (!isUserExist) {
         throw new UnauthorizedException('Usuario no existe');
@@ -57,11 +53,11 @@ export class AuthService {
     try {
       const { email, password, dateAdmission, ...restOfData } = createUserDto;
 
-      await this.prismaService.user.findFirst({
-        where: {
-          email
-        }
-      });
+      const userRegistered = await this.prismaService.user.findFirst({ where: { email } });
+
+      if (userRegistered) {
+        throw new BadRequestException('This email has already been registered.');
+      }
 
       const newData = {
         email,
@@ -70,9 +66,7 @@ export class AuthService {
         ...restOfData
       }
 
-      const user = await this.prismaService.user.create({
-        data: newData
-      });
+      const userCreated = await this.prismaService.user.create({ data: newData });
 
 
       return {
