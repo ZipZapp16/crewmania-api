@@ -40,6 +40,20 @@ export class UserService {
         private readonly commonService: CommonService
     ) { }
 
+    async findUserByEmail(userEmail: string): Promise<UserResponse> {
+        try {
+            const user = await this.prismaService.user.findUnique({ where: { email: userEmail } });
+
+            return {
+                status: "ok",
+                message: "success",
+                data: user
+            };
+        } catch (error) {
+            throw new NotFoundException(`User with email ${userEmail} doesn't exist.`);
+        }
+    }
+
     async findUser(userId: string): Promise<UserResponse> {
         try {
             const user = await this.prismaService.user.findUnique({ where: { id: userId } });

@@ -37,6 +37,11 @@ export class UserController {
         return this.userService.findUser(userId);
     }
 
+    @Get('user/:userEmail')
+    findUserByEmail(@Param('userEmail') userEmail: string): Promise<UserResponse> {
+        return this.userService.findUserByEmail(userEmail);
+    }
+
     @Patch('user/:userId')
     updateUser(
         @Param('userId', ParseUUIDPipe) userId: string,
