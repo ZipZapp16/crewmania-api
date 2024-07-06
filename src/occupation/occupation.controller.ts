@@ -7,7 +7,7 @@ import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, Posi
 @ApiTags('Occupation')
 @ApiBearerAuth()
 @Controller('occupation')
-export class OccupancyController {
+export class OccupationController {
   constructor(private readonly occupationService: OccupationService) {}
 
   // * Comienzan endpoitns para positions
