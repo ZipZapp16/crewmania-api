@@ -1,10 +1,11 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { OccupationService } from "./occupation.service";
 import { CreateHeadquarterDto, CreateHierarchyDto, CreatePositionDto, CreatePositionHierarchyDto, UpdateHeadquarterDto, UpdatePositionDto, UpdatePositionHierarchyDto, UpdateHierarchyDto } from "./dto";
 import { HeadquarterResponse, HierarchyResponse, PositionHierarchyResponse, PositionResponse } from "./interfaces";
 
 @ApiTags('Occupation')
+@ApiBearerAuth()
 @Controller('occupation')
 export class OccupancyController {
   constructor(private readonly occupationService: OccupationService) {}

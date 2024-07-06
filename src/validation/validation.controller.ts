@@ -4,11 +4,12 @@ import { CreateValidationFormDto } from './dto/create-validation-form.dto';
 import { CreateStatusValidationDto } from './dto/create-status-validation.dto';
 import { ValidationResponse } from './interfaces/validation-response.interface';
 import { StatusValidationResponse } from './interfaces/status-validation-response.interface';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdateValidationFormDto } from './dto/update-validation-form.dto';
 import { UpdateStatusValidationDto } from './dto';
 
 @ApiTags('Validation')
+@ApiBearerAuth()
 @Controller('validation')
 export class ValidationController {
   constructor(private readonly validationService: ValidationService) { }
