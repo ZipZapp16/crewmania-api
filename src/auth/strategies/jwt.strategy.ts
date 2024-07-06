@@ -19,17 +19,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    async validateJwt(jwtPayload: JwtPayload): Promise<User> {
+    async validate(jwtPayload: JwtPayload): Promise<User> {
         const { email } = jwtPayload;
 
         const user = await this.prismaService.user.findUnique({ where: { email }});
 
         if(!user) {
-            throw new UnauthorizedException(`The token from the user with email ${email} is not valid.`);
+            throw new UnauthorizedException(`The token from the user is not valid.`);
         }
 
         if(!user.enabled) {
-            throw new UnauthorizedException(`The account of the user with email ${email} is not active yet, talk with an admin.`);
+            throw new UnauthorizedException(`The account of the user with email ${email} is disabled.`);
         }
 
         return user;
