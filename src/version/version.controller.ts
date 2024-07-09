@@ -1,34 +1,34 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { VersionService } from './version.service';
-import { CreateVersionDto } from './dto/create-version.dto';
-import { UpdateVersionDto } from './dto/update-version.dto';
+import { CreateVersionDto, UpdateVersionDto } from './dto';
+import { VersionResponse } from './interfaces';
 
 @Controller('version')
 export class VersionController {
   constructor(private readonly versionService: VersionService) {}
 
-  @Post()
-  create(@Body() createVersionDto: CreateVersionDto) {
+  @Post('/create')
+  create(@Body() createVersionDto: CreateVersionDto): Promise<VersionResponse> {
     return this.versionService.create(createVersionDto);
   }
 
-  @Get()
-  findAll() {
+  @Get('/findAll')
+  findAll(): Promise<VersionResponse> {
     return this.versionService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.versionService.findOne(+id);
+  @Get('/:versionId/findOne')
+  findOne(@Param('versionId') versionId: string): Promise<VersionResponse> {
+    return this.versionService.findOne(versionId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVersionDto: UpdateVersionDto) {
-    return this.versionService.update(+id, updateVersionDto);
+  @Patch('/:versionId/update')
+  update(@Param('versionId') versionId: string, @Body() updateVersionDto: UpdateVersionDto): Promise<VersionResponse> {
+    return this.versionService.update(versionId, updateVersionDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.versionService.remove(+id);
+  @Delete('/:versionId/delete')
+  remove(@Param('versionId') versionId: string): Promise<VersionResponse> {
+    return this.versionService.remove(versionId);
   }
 }
