@@ -1,0 +1,1 @@
+export { LogsResponse } from "./log-response.interface";
