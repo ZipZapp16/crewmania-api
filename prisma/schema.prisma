@@ -15,7 +15,7 @@ datasource db {
 
 model Version {
   id          String   @id @unique @default(uuid())
-  number      Decimal
+  number      String
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
