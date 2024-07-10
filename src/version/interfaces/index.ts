@@ -1,0 +1,1 @@
+export { VersionResponse } from "./version-response.interface";
