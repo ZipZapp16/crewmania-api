@@ -2,7 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from
 import { LogsService } from './logs.service';
 import { CreateLogDto, UpdateLogDto } from './dto';
 import { LogsResponse } from './interfaces';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Logs')
+@ApiBearerAuth()
 @Controller('logs')
 export class LogsController {
   constructor(private readonly logsService: LogsService) {}

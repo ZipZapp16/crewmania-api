@@ -2,7 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from
 import { VersionService } from './version.service';
 import { CreateVersionDto, UpdateVersionDto } from './dto';
 import { VersionResponse } from './interfaces';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Version')
+@ApiBearerAuth()
 @Controller('version')
 export class VersionController {
   constructor(private readonly versionService: VersionService) {}
