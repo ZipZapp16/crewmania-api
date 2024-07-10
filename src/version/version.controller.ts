@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { VersionService } from './version.service';
 import { CreateVersionDto, UpdateVersionDto } from './dto';
 import { VersionResponse } from './interfaces';
@@ -18,17 +18,17 @@ export class VersionController {
   }
 
   @Get('/:versionId/findOne')
-  findOne(@Param('versionId') versionId: string): Promise<VersionResponse> {
+  findOne(@Param('versionId', ParseUUIDPipe) versionId: string): Promise<VersionResponse> {
     return this.versionService.findOne(versionId);
   }
 
   @Patch('/:versionId/update')
-  update(@Param('versionId') versionId: string, @Body() updateVersionDto: UpdateVersionDto): Promise<VersionResponse> {
+  update(@Param('versionId', ParseUUIDPipe) versionId: string, @Body() updateVersionDto: UpdateVersionDto): Promise<VersionResponse> {
     return this.versionService.update(versionId, updateVersionDto);
   }
 
   @Delete('/:versionId/delete')
-  remove(@Param('versionId') versionId: string): Promise<VersionResponse> {
+  remove(@Param('versionId', ParseUUIDPipe) versionId: string): Promise<VersionResponse> {
     return this.versionService.remove(versionId);
   }
 }
