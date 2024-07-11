@@ -436,36 +436,40 @@ export class UserService {
         }
     }
 
-    async uploadUserImageValidation(file: Express.Multer.File, userId: string): Promise<DataResponse> {
+    async uploadUserImage(file: Express.Multer.File, userId: string, imageName: string): Promise<DataResponse> {
         try {
+            const typeImage: string = `${imageName}_image`;
 
-            const patronUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${userId}/${typeImage}_${userId}.jpg`;
 
-            if (!patronUUID.test(userId)) {
-                throw new BadRequestException(`The value ${userId} is not a UUID`);
+            let saveImageUploadedId: any;
+            let urlUserImageSaved: any;
+
+
+            if(imageName === "profile") {
+                const { data: user } = await this.findUser(userId);
+
+                saveImageUploadedId = await this.commonService.uploadFileS3(file, userId, typeImage);
+
+                urlUserImageSaved = await this.prismaService.user.update({ where: { id: user['id'] }, data: { profilePicture: url }})
+            }
+            else {
+                const { data: userValidation } = await this.findUserValidationByUserId(userId);
+    
+                saveImageUploadedId = await this.commonService.uploadFileS3(file, userId, typeImage);
+
+                urlUserImageSaved = await this.prismaService.userValidation.update({
+                    where: { id: userValidation['id'] }, data: { url }
+                });
             }
 
-            const typeImage: string = 'image_validation';
+            if (!urlUserImageSaved) {
+                throw new BadRequestException(`Can't save de url to the ${imageName} image of user with id ${userId}`);
+            }
 
-            const { data: userValidation } = await this.findUserValidationByUserId(userId);
-
-            const saveImageUploadedId = await this.commonService.uploadFileS3(file, userId, typeImage);
-
-            if (saveImageUploadedId) {
-                const urlUserImageValidation = await this.prismaService.userValidation.update({
-                    where: { id: userValidation['id'] }, data: {
-                        url: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${userId}/${typeImage}_${userId}.jpg`
-                    }
-                });
-
-                if (!urlUserImageValidation) {
-                    throw new BadRequestException(`Can't save de url to the image validation of user with id ${userId}`);
-                }
-
-                return {
-                    status: "ok",
-                    message: "success"
-                }
+            return {
+                status: "ok",
+                message: "success"
             }
         } catch (error) {
             throw new BadRequestException(`Error to upload image. ${error}`);
