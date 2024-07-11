@@ -148,7 +148,7 @@ export class UserController {
         @UploadedFile() file: Express.Multer.File,
         @Body() idUser: { userId: string }
     ): Promise<DataResponse> {
-        return this.userService.uploadUserImageValidation(file, idUser.userId);
+        return this.userService.uploadUserImage(file, idUser.userId, "validation");
     }
 
     @Get('/validation')
