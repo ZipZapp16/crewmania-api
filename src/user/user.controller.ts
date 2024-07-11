@@ -42,6 +42,17 @@ export class UserController {
         return this.userService.findUserByEmail(userEmail);
     }
 
+    @Post('/validation/uploadUserProfileImage')
+    @UseInterceptors(FileInterceptor('userImageValidation', {
+        fileFilter: fileFilter
+    }))
+    uploadUserImage(
+        @UploadedFile() file: Express.Multer.File,
+        @Body() idUser: { userId: string }
+    ): Promise<DataResponse> {
+        return this.userService.uploadUserImage(file, idUser.userId, "profile");
+    }
+
     @Patch('user/:userId')
     updateUser(
         @Param('userId', ParseUUIDPipe) userId: string,
