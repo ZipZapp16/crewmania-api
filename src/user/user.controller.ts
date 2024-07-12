@@ -76,26 +76,31 @@ export class UserController {
 
     // * Comienzan endpoints para userOccupation
     @Post('/userOccupation')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     createUserOccupation(@Body() createUserOccupationDto: CreateUserOccupationDto): Promise<UserOccupationResponse> {
         return this.userService.createUserOccupation(createUserOccupationDto);
     }
 
     @Get('/userOccupation/:userOccupationId')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     findUserOccupation(@Param('userOccupationId', ParseUUIDPipe) userOccupationId: string): Promise<UserOccupationResponse> {
         return this.userService.findUserOccupation(userOccupationId);
     }
 
     @Get('/:userId/userOccupation')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     findUserOccupationByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupationResponse> {
         return this.userService.findUserOccupationByUserId(userId);
     }
 
     @Get('/userOccupation')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     findAllUserOccupation(): Promise<UserOccupationResponse> {
         return this.userService.findAllUserOccupation();
     }
 
     @Patch('/:userId/userOccupation')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     updateUserOccupation(
         @Param('userId', ParseUUIDPipe) userId: string,
         @Body() updateUserOccupationDto: UpdateUserOccupationDto
@@ -104,6 +109,7 @@ export class UserController {
     }
 
     @Delete('/:userId/userOccupation')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     deleteUserOccupation(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserOccupationResponse> {
         return this.userService.deleteUserOccupation(userId);
     }
