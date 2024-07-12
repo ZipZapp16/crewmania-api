@@ -16,6 +16,8 @@ import {
 
 import { fileFilter } from "src/helpers";
 import { UserService } from "./user.service";
+import { ValidRoles } from "src/auth/interfaces";
+import { Auth } from "src/auth/decorators";
 
 
 @ApiTags('Users')
@@ -28,21 +30,25 @@ export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get()
+    @Auth(ValidRoles.admin, ValidRoles.user)
     getAllUsers(): Promise<UserResponse> {
         return this.userService.findAllUsers();
     }
 
     @Get('user/:userId')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     findUser(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserResponse> {
         return this.userService.findUser(userId);
     }
 
     @Get('user/email/:userEmail')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     findUserByEmail(@Param('userEmail') userEmail: string): Promise<UserResponse> {
         return this.userService.findUserByEmail(userEmail);
     }
 
     @Post('/validation/uploadUserProfileImage')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     @UseInterceptors(FileInterceptor('userImageValidation', {
         fileFilter: fileFilter
     }))
@@ -54,6 +60,7 @@ export class UserController {
     }
 
     @Patch('user/:userId')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     updateUser(
         @Param('userId', ParseUUIDPipe) userId: string,
         @Body() updateUserDto: UpdateUserDto
@@ -62,6 +69,7 @@ export class UserController {
     }
 
     @Delete('user/:userId')
+    @Auth(ValidRoles.admin)
     deleteUser(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserResponse> {
         return this.userService.deleteUser(userId);
     }
