@@ -156,11 +156,13 @@ export class UserController {
 
     // * Comienzan endpoints para userValidation
     @Post('/validation')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     createUserValidation(@Body() createUserValidationDto: CreateUserValidationDto): Promise<UserValidationResponse> {
         return this.userService.createUserValidation(createUserValidationDto);
     }
 
     @Post('/validation/uploadUserImageValidation')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     @UseInterceptors(FileInterceptor('userImageValidation', {
         fileFilter: fileFilter
     }))
@@ -172,16 +174,19 @@ export class UserController {
     }
 
     @Get('/validation')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     findAllUserValidations(): Promise<UserValidationResponse> {
         return this.userService.findAllUserValidations();
     }
 
     @Get('/validation/:validationId')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     findUserValidation(@Param('validationId', ParseUUIDPipe) validationId: string): Promise<UserValidationResponse> {
         return this.userService.findUserValidation(validationId);
     }
 
     @Patch('/validation/:validationId')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     updateUserValidation(
         @Param('validationId', ParseUUIDPipe) validationId: string,
         @Body() updateUserValidationDto: UpdateUserValidationDto
@@ -190,6 +195,7 @@ export class UserController {
     }
 
     @Delete('/validation/:validationId')
+    @Auth(ValidRoles.admin)
     deleteUserValidation(@Param('validationId', ParseUUIDPipe) validationId: string): Promise<UserValidationResponse> {
         return this.userService.deleteUserValidation(validationId);
     }
