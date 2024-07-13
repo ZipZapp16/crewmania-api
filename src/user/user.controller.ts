@@ -116,26 +116,31 @@ export class UserController {
 
     // * Comienzan endpoints para userMembership
     @Post('/membership')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     createUserMembership(@Body() userMembershipDto: CreateUserMembershipDto): Promise<UserMembershipResponse> {
         return this.userService.createUserMembership(userMembershipDto);
     }
 
     @Get('/memberships')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     getAllUserMemberships(): Promise<UserMembershipResponse> {
         return this.userService.findAllUserMemberships();
     }
 
     @Get('/:userId/memberships')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     getMembershipsByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserMembershipResponse> {
         return this.userService.findMembershipsByUserId(userId);
     }
 
     @Get('/:userId/membership/validation')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     calculateValidationOfUserMembership(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserMembershipResponse> {
         return this.userService.calculateValidationOfUserMembership(userId);
     }
 
     @Patch('/memberships/:userMembershipId')
+    @Auth(ValidRoles.admin, ValidRoles.user)
     updateUserMembership(
         @Param('userMembershipId', ParseUUIDPipe) userMembershipId: string,
         @Body() updateUserMembershipDto: UpdateUserMembershipDto
@@ -144,6 +149,7 @@ export class UserController {
     }
 
     @Delete('/memberships/:userMembershipId')
+    @Auth(ValidRoles.admin)
     deleteUserMembership(@Param('userMembershipId', ParseUUIDPipe) userMembershipId: string): Promise<UserMembershipResponse> {
         return this.userService.deleteUserMembership(userMembershipId);
     }
