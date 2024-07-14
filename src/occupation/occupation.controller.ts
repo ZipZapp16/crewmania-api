@@ -48,21 +48,25 @@ export class OccupationController {
 
   // * Comienzan endpoitns para hierarchys
   @Post('/hierarchys')
+  @Auth(ValidRoles.admin)
   createHierarchys(@Body() createHierarchyDto: CreateHierarchyDto): Promise<HierarchyResponse> {
     return this.occupationService.createHierarchys(createHierarchyDto);
   }
 
   @Get('/hierarchy/:hierarchyId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findHierarchy(@Param('hierarchyId', ParseUUIDPipe) hierarchyId: string): Promise<HierarchyResponse> {
     return this.occupationService.findHierarchy(hierarchyId);
   }
 
   @Get('/hierarchys')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findAllHierarchys(): Promise<HierarchyResponse> {
     return this.occupationService.findAllHierarchys();
   }
 
   @Patch('/hierarchy/:hierarchyId')
+  @Auth(ValidRoles.admin)
   updateHierarchy(
     @Param('hierarchyId', ParseUUIDPipe) hierarchyId: string,
     @Body() updateHierarchyDto: UpdateHierarchyDto
@@ -71,6 +75,7 @@ export class OccupationController {
   }
 
   @Delete('/hierarchy/:hierarchyId')
+  @Auth(ValidRoles.admin)
   deleteHierarchy(
     @Param('hierarchyId', ParseUUIDPipe) hierarchyId: string
   ): Promise<HierarchyResponse> {
