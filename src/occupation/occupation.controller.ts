@@ -118,26 +118,31 @@ export class OccupationController {
 
   // * Comienzan endpoints para positionHerarchys
   @Post('/positionHierarchies')
+  @Auth(ValidRoles.admin)
   createPositionHierarchy(@Body() createPositionHierarchyDto: CreatePositionHierarchyDto): Promise<PositionHierarchyResponse> {
     return this.occupationService.createPositionHierarchy(createPositionHierarchyDto);
   }
 
   @Get('/positionHierarchies/:positionHerarchyId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findPositionHerarchy(@Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string) {
     return this.occupationService.findPositionHerarchy(positionHerarchyId);
   }
   
   @Get('/positionHierarchies/position/:positionId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findHierarchiesWithPositionId(@Param('positionId', ParseUUIDPipe) positionId: string) {
     return this.occupationService.findHierarchiesWithPositionId(positionId);
   }
 
   @Get('/positionHierarchies')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findAllPositionsHerarchies(): Promise<PositionHierarchyResponse> {
     return this.occupationService.findAllPositionHerarchys();
   }
 
   @Patch('/positionHierarchies/:positionHerarchyId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   updatePositionHierarchy(
     @Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string,
     @Body() updatePositionHierarchyDto: UpdatePositionHierarchyDto
@@ -146,6 +151,7 @@ export class OccupationController {
   }
 
   @Delete('/positionHierarchies/:positionHerarchyId')
+  @Auth(ValidRoles.admin)
   deletePositionHierarchy(@Param('positionHerarchyId', ParseUUIDPipe) positionHerarchyId: string) {
     return this.occupationService.deletePositionHierarchy(positionHerarchyId);
   }
