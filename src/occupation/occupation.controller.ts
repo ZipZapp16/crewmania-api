@@ -14,21 +14,25 @@ export class OccupationController {
 
   // * Comienzan endpoitns para positions
   @Post('/positions')
+  @Auth(ValidRoles.admin)
   createPosition(@Body() createPositionDto: CreatePositionDto): Promise<PositionResponse> {
     return this.occupationService.createPosition(createPositionDto);
   }
   
   @Get('/position/:positionId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findPosition(@Param('positionId', ParseUUIDPipe) positionId: string): Promise<PositionResponse> {
     return this.occupationService.findPosition(positionId);
   }
 
   @Get('/positions')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findAllPositions(): Promise<PositionResponse> {
     return this.occupationService.findAllPositions();
   }
 
   @Patch('/position/:positionId')
+  @Auth(ValidRoles.admin)
   updatePosition(
     @Param('positionId', ParseUUIDPipe) positionId: string, 
     @Body() updatePositionDto: UpdatePositionDto
@@ -37,6 +41,7 @@ export class OccupationController {
   }
 
   @Delete('/position/:positionId')
+  @Auth(ValidRoles.admin)
   deletePosition(@Param('positionId', ParseUUIDPipe) positionId: string): Promise<PositionResponse> {
     return this.occupationService.deletePosition(positionId);
   }
