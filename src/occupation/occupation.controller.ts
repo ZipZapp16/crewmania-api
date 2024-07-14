@@ -84,21 +84,25 @@ export class OccupationController {
 
   // * Comienzan endpoints para headquartes
   @Post('/headquarters')
+  @Auth(ValidRoles.admin)
   creatHeadquarter(@Body() createHeadquarterDto: CreateHeadquarterDto): Promise<HeadquarterResponse> {
     return this.occupationService.createHeadquarter(createHeadquarterDto);
   }
 
   @Get('/headquarter/:headquarterId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findHeadquarter(@Param('headquarterId', ParseUUIDPipe) headquarterId: string): Promise<HeadquarterResponse> {
     return this.occupationService.findHeadquarter(headquarterId);
   }
 
   @Get('/headquarters')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findAllHeadquarters(): Promise<HeadquarterResponse> {
     return this.occupationService.findAllHeadquarters();
   }
 
   @Patch('/headquarter/:headquarterId')
+  @Auth(ValidRoles.admin)
   updateHeadquarter(
     @Param('headquarterId', ParseUUIDPipe) headquarterId: string,
     @Body() updateHeadquarterDto: UpdateHeadquarterDto
@@ -107,6 +111,7 @@ export class OccupationController {
   }
 
   @Delete('/headquarter/:headquarterId')
+  @Auth(ValidRoles.admin)
   deleteHeadquarter(@Param('headquarterId', ParseUUIDPipe) headquarterId: string): Promise<HeadquarterResponse> {
     return this.occupationService.deleteHeadquarter(headquarterId);
   }
