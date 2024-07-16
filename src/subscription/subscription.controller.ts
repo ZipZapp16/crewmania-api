@@ -3,6 +3,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SubscriptionService } from './subscription.service';
 import { MembershipOfferResponse, MembershipResponse, OfferResponse, FindMembershipOfferResponse, MembershipPricesResponse } from './interfaces';
 import { CreateOfferDto, UpdateMembershipDto, UpdateMembershipOfferDto, UpdateOfferDto, CreateMembershipDto, CreateMembershipOfferDto } from './dto';
+import { Auth } from 'src/auth/decorators';
+import { ValidRoles } from 'src/auth/interfaces';
 
 @ApiTags('Subscription')
 @ApiBearerAuth()
