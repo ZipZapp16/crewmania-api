@@ -52,21 +52,25 @@ export class ValidationController {
 
   // * Comienzan endpoints para statusValidations
   @Post('/status')
+  @Auth(ValidRoles.admin)
   createStatusValidation(@Body() createStatusValidationDto: CreateStatusValidationDto): Promise<StatusValidationResponse> {
     return this.validationService.createStatusValidation(createStatusValidationDto);
   }
 
   @Get('/status')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findAllStatusValidation(): Promise<StatusValidationResponse> {
     return this.validationService.findAllStatusValidation();
   }
 
   @Get('/status/:statusId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findStatusValidation(@Param('statusId', ParseUUIDPipe) statusId: string): Promise<StatusValidationResponse> {
     return this.validationService.findStatusValidation(statusId);
   }
 
   @Patch('/status/:statusId')
+  @Auth(ValidRoles.admin)
   updateStatusValidation(
     @Param('statusId', ParseUUIDPipe) statusId: string,
     @Body() updateStatusValidationDto: UpdateStatusValidationDto
@@ -75,6 +79,7 @@ export class ValidationController {
   }
 
   @Delete('/status/:statusId')
+  @Auth(ValidRoles.admin)
   deleteStatusValidation(@Param('statusId', ParseUUIDPipe) statusId: string): Promise<StatusValidationResponse> {
     return this.validationService.deleteStatusValidation(statusId);
   }
