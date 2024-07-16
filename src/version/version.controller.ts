@@ -3,6 +3,8 @@ import { VersionService } from './version.service';
 import { CreateVersionDto, UpdateVersionDto } from './dto';
 import { VersionResponse } from './interfaces';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/auth/decorators';
+import { ValidRoles } from 'src/auth/interfaces';
 
 @ApiTags('Version')
 @ApiBearerAuth()
