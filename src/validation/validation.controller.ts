@@ -7,6 +7,8 @@ import { StatusValidationResponse } from './interfaces/status-validation-respons
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdateValidationFormDto } from './dto/update-validation-form.dto';
 import { UpdateStatusValidationDto } from './dto';
+import { Auth } from 'src/auth/decorators';
+import { ValidRoles } from 'src/auth/interfaces';
 
 @ApiTags('Validation')
 @ApiBearerAuth()
