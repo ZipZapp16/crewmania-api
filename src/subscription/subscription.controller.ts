@@ -81,31 +81,37 @@ export class SubscriptionController {
 
   // * Comienzan endpoints para membership offers
   @Post('/membership-offers')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   createMembershipOffer(@Body() createMembershipOfferDto: CreateMembershipOfferDto): Promise<MembershipOfferResponse> {
     return this.subscriptionService.createMembershipOffer(createMembershipOfferDto);
   }
 
   @Get('/membership-offer/:membershipOfferId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findMembershipOffer(@Param('membershipOfferId', ParseUUIDPipe) membershipOfferId: string): Promise<MembershipOfferResponse> {
     return this.subscriptionService.findMembershipOffer(membershipOfferId);
   }
 
   @Get('/membership-offers')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findAllMembershipOffers(): Promise<MembershipOfferResponse> {
     return this.subscriptionService.findAllMembershipOffers();
   }
 
   @Get('/membership-offers/membershipId/:membershipId/offers')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findOffersByMembershipId(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<FindMembershipOfferResponse> {
     return this.subscriptionService.findOffersByMembershipId(membershipId);
   }
 
   @Get('/membership-offers/membershipId/:membershipId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findMembershipOffersByMembershipId(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<MembershipOfferResponse> {
     return this.subscriptionService.findMembershipOffersByMembershipId(membershipId);
   }
 
   @Patch('/membership-offer/:membershipOfferId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   updateMembershipOffer(
     @Param('membershipOfferId', ParseUUIDPipe) membershipOfferId: string,
     @Body() updateMembershipOfferDto: UpdateMembershipOfferDto
@@ -114,6 +120,7 @@ export class SubscriptionController {
   }
 
   @Delete('/membership-offer/:membershipOfferId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   deleteMembershipOffer(@Param('membershipOfferId', ParseUUIDPipe) membershipOfferId: string): Promise<MembershipOfferResponse> {
     return this.subscriptionService.deleteMembershipOffer(membershipOfferId);
   }
