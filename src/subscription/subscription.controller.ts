@@ -47,21 +47,25 @@ export class SubscriptionController {
 
   // * Comienzan endpoints para offers
   @Post('/offer')
+  @Auth(ValidRoles.admin)
   createOffer(@Body() createOfferDto: CreateOfferDto): Promise<OfferResponse> {
     return this.subscriptionService.createOffer(createOfferDto);
   }
 
   @Get('/offer/:offerId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findOffer(@Param('offerId', ParseUUIDPipe) offerId: string): Promise<OfferResponse> {
     return this.subscriptionService.findOffer(offerId);
   }
 
   @Get("/offers")
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findAllOffers(): Promise<OfferResponse> {
     return this.subscriptionService.findAllOffers();
   }
 
   @Patch('/offer/:offerId')
+  @Auth(ValidRoles.admin)
   updateOffer(
     @Param('offerId', ParseUUIDPipe) offerId: string,
     @Body() updateOfferDto: UpdateOfferDto
@@ -70,6 +74,7 @@ export class SubscriptionController {
   }
 
   @Delete('/offer/:offerId')
+  @Auth(ValidRoles.admin)
   deleteOffer(@Param('offerId', ParseUUIDPipe) offerId: string): Promise<OfferResponse> {
     return this.subscriptionService.deleteOffer(offerId);
   }
