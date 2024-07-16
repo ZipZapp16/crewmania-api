@@ -75,7 +75,7 @@ export class OccupationService {
     try {
       const position = await this.findPosition(positionId);
 
-      const positionDeleted = await this.prismaService.position.delete({ where: { id: position.data['id'] } });
+      const positionDeleted = await this.prismaService.position.update({ where: { id: position.data['id'] }, data: { enabled: false } });
 
       return {
         status: 'ok',
