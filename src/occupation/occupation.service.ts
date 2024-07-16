@@ -288,7 +288,7 @@ export class OccupationService {
 
         return data;
       })
- 
+
       let data = await Promise.all(hierarchisData);
 
       let response: Hierarchy[] = data.reduce<Hierarchy[]>((acc, item) => {
@@ -355,7 +355,7 @@ export class OccupationService {
 
       const positionHierarchyToDelete = await this.prismaService.positionsHerarchy.update({ where: { id: positionHierarchy['id'] }, data: { enabled: false } });
 
-      return { 
+      return {
         status: "ok",
         message: "success",
         data: positionHierarchyToDelete
