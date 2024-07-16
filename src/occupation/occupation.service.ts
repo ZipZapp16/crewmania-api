@@ -266,7 +266,7 @@ export class OccupationService {
 
   async findPositionHerarchy(positionHerarchyId: string): Promise<PositionHierarchyResponse> {
     try {
-      const positionHerarchy = await this.prismaService.positionsHerarchy.findUnique({ where: { id: positionHerarchyId }});
+      const positionHerarchy = await this.prismaService.positionsHerarchy.findUnique({ where: { id: positionHerarchyId } });
 
       return {
         message: 'success',
