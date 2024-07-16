@@ -228,7 +228,7 @@ export class OccupationService {
     try {
       const headquarter = this.findHeadquarter(headquarterId);
 
-      const headquarterToDelete = await this.prismaService.headquarter.delete({ where: { id: headquarter['id'] } });
+      const headquarterToDelete = await this.prismaService.headquarter.update({ where: { id: headquarter['id'] }, data: { enabled: false } });
 
       return {
         status: "ok",
