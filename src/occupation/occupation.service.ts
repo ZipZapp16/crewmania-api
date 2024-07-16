@@ -349,11 +349,11 @@ export class OccupationService {
     }
   }
 
-  async deletePositionHierarchy(positionHerarchyId: string): Promise<PositionHierarchyResponse>  {
+  async deletePositionHierarchy(positionHerarchyId: string): Promise<PositionHierarchyResponse> {
     try {
       const { data: positionHierarchy } = await this.findPositionHerarchy(positionHerarchyId);
 
-      const positionHierarchyToDelete = await this.prismaService.positionsHerarchy.delete({ where: { id: positionHierarchy['id'] }});
+      const positionHierarchyToDelete = await this.prismaService.positionsHerarchy.update({ where: { id: positionHierarchy['id'] }, data: { enabled: false } });
 
       return { 
         status: "ok",
