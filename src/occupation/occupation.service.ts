@@ -152,7 +152,7 @@ export class OccupationService {
     try {
       const { data: hierarchy } = await this.findHierarchy(hierarchyId);
 
-      const hierarchyDeleted = await this.prismaService.hierarchy.delete({ where: { id: hierarchy['id'] } });
+      const hierarchyDeleted = await this.prismaService.hierarchy.update({ where: { id: hierarchy['id'] }, data: { enabled: false } });
 
       return {
         status: "ok",
