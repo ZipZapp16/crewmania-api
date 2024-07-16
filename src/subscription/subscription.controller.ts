@@ -13,21 +13,25 @@ export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) { }
 
   @Post('/membership')
+  @Auth(ValidRoles.admin)
   createMembership(@Body() createMembershipDto: CreateMembershipDto): Promise<MembershipResponse> {
     return this.subscriptionService.createMembership(createMembershipDto);
   }
 
   @Get('/membership/:membershipId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findMembership(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<MembershipResponse> {
     return this.subscriptionService.findMembership(membershipId);
   }
 
   @Get('/memberships')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findAllMembership(): Promise<MembershipResponse> {
     return this.subscriptionService.findAllMembership();
   }
 
   @Patch('/membership/:membershipId')
+  @Auth(ValidRoles.admin)
   updateMembership(
     @Param('membershipId', ParseUUIDPipe) membershipId: string,
     @Body() updateMembershipDto: UpdateMembershipDto
@@ -36,6 +40,7 @@ export class SubscriptionController {
   }
 
   @Delete('/membership/:membershipId')
+  @Auth(ValidRoles.admin)
   deleteMembership(@Param('membershipId', ParseUUIDPipe) membershipId: string): Promise<MembershipResponse> {
     return this.subscriptionService.deleteMembership(membershipId);
   }
