@@ -18,21 +18,25 @@ export class ValidationController {
 
   // * Comienzan endpoints para validationForms
   @Post('/forms')
+  @Auth(ValidRoles.admin)
   createValidationForm(@Body() createValidationDto: CreateValidationFormDto): Promise<ValidationResponse> {
     return this.validationService.createValidationForm(createValidationDto);
   }
 
   @Get('/forms')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findAllValidationForms(): Promise<ValidationResponse> {
     return this.validationService.findAllValidationForms();
   }
 
   @Get('/form/:formId')
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findValidationForm(@Param('formId', ParseUUIDPipe) formId: string): Promise<ValidationResponse> {
     return this.validationService.findValidationForm(formId);
   }
 
   @Patch('/form/:formId')
+  @Auth(ValidRoles.admin)
   updateValidationForm(
     @Param('formId', ParseUUIDPipe) formId: string,
     @Body() updateValidationFormDto: UpdateValidationFormDto
@@ -41,6 +45,7 @@ export class ValidationController {
   }
 
   @Delete('/form/:formId')
+  @Auth(ValidRoles.admin)
   deleteValidationForm(@Param('formId', ParseUUIDPipe) formId: string): Promise<ValidationResponse> {
     return this.validationService.deleteValidationForm(formId);
   }
