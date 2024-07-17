@@ -150,7 +150,7 @@ export class SubscriptionService {
     try {
       const { data: offerToDelete } = await this.findOffer(offerId);
 
-      const offerDeleted = await this.prismaService.offer.delete({ where: { id: offerToDelete['id'] } });
+      const offerDeleted = await this.prismaService.offer.update({ where: { id: offerToDelete['id'] }, data: { enabled: false } });
 
       return {
         status: 'ok',
