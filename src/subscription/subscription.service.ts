@@ -71,7 +71,7 @@ export class SubscriptionService {
     try {
       const { data: membershipToDelete } = await this.findMembership(membershipId);
 
-      const membershipDeleted = await this.prismaService.membership.delete({ where: { id: membershipToDelete['id'] } })
+      const membershipDeleted = await this.prismaService.membership.update({ where: { id: membershipToDelete['id'] }, data: { enabled: false } });
 
       return {
         status: "ok",
