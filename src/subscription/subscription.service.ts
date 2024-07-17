@@ -214,7 +214,7 @@ export class SubscriptionService {
 
   async findMembershipOffersByMembershipId(membershipId: string): Promise<MembershipOfferResponse> {
     try {
-      const membershipOffers = await this.prismaService.membershipOffer.findMany({ where: { membershipId } });
+      const membershipOffers = await this.prismaService.membershipOffer.findMany({ where: { membershipId }});
 
       return {
         status: "ok",
@@ -233,15 +233,15 @@ export class SubscriptionService {
 
       const membershipOffer = await this.prismaService.membershipOffer.findMany({ where: { membershipId, enabled: true } });
 
-      if(membershipOffer.length > 0) {
+      if (membershipOffer.length > 0) {
         const response = await Promise.all(membershipOffer.map(async ({ offerId }) => {
-          if(offerId) {
+          if (offerId) {
             const { data: offer } = await this.findOffer(offerId);
-    
+
             return offer;
           }
         }));
-  
+
         response.map(offer => {
           if(offer) {
             offers.push(offer);
@@ -268,12 +268,12 @@ export class SubscriptionService {
 
       let prices = [];
       const cost = parseFloat(membership['cost']);
-      
+
       offersFounded.map(({ percentageOffer, enabled }) => {
-        if(enabled) {
+        if (enabled) {
           const discount = parseFloat(percentageOffer.toString());
-          const priceWithDiscount = (cost * (discount) / 100 );
-  
+          const priceWithDiscount = (cost * (discount) / 100);
+
           prices.push({
             membershipId,
             normalPrice: cost,
