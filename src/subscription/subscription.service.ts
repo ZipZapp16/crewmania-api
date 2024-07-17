@@ -313,7 +313,7 @@ export class SubscriptionService {
     try {
       const { data: membershipOfferToDelete } = await this.findMembershipOffer(membershipOfferId);
 
-      const membershipOfferDeleted = await this.prismaService.membershipOffer.delete({ where: { id: membershipOfferToDelete['id'] } });
+      const membershipOfferDeleted = await this.prismaService.membershipOffer.update({ where: { id: membershipOfferToDelete['id'] }, data: { enabled: false } });
 
       return {
         status: 'ok',
