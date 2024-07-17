@@ -214,7 +214,7 @@ export class SubscriptionService {
 
   async findMembershipOffersByMembershipId(membershipId: string): Promise<MembershipOfferResponse> {
     try {
-      const membershipOffers = await this.prismaService.membershipOffer.findMany({ where: { membershipId }});
+      const membershipOffers = await this.prismaService.membershipOffer.findMany({ where: { membershipId } });
 
       return {
         status: "ok",
